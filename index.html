@@ -6,104 +6,726 @@
 <title>CEE FIT</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Iron Log">
+<meta name="apple-mobile-web-app-title" content="Cee Fit">
 <meta name="theme-color" content="#0d0d0d">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
-  --bg:#0d0d0d;
-  --panel:#161616;
-  --panel-raised:#1d1d1d;
-  --line:#2a2a2a;
-  --ink:#f2f0ea;
-  --ink-dim:#8a8780;
-  --push:#e8543c;
-  --pull:#3ca7e8;
-  --legs:#e8c53c;
-  --cardio:#3ce8a0;
-  --full:#b93ce8;
-  --rest:#555;
+  --bg:#0d0d0d; --panel:#161616; --panel-raised:#1d1d1d; --line:#2a2a2a;
+  --ink:#f2f0ea; --ink-dim:#8a8780;
+  --c1:#e8543c; --c2:#3ca7e8; --c3:#e8c53c; --c4:#3ce8a0; --c5:#b93ce8; --c6:#d4af6a;
   --gold:#d4af6a;
 }
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overscroll-behavior-y:none;}
-body{padding-bottom:env(safe-area-inset-bottom);}
-.topbar{
-  position:sticky;top:0;z-index:20;
-  background:linear-gradient(180deg,#0d0d0d 80%,rgba(13,13,13,0));
-  padding:calc(env(safe-area-inset-top) + 18px) 20px 10px;
-}
-.topbar h1{
-  font-family:Georgia,'Times New Roman',serif;
-  font-size:28px; font-weight:700; letter-spacing:0.5px; margin:0;
-  font-style:italic;
-}
-.topbar .sub{font-size:12px;color:var(--ink-dim);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+body{padding-bottom:calc(env(safe-area-inset-bottom) + 30px);}
+input,button{font-family:inherit;}
+button{cursor:pointer;}
 
-.daytabs{
-  display:flex; gap:6px; overflow-x:auto; padding:14px 20px 6px;
-  scrollbar-width:none;
-}
+.topbar{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#0d0d0d 82%,rgba(13,13,13,0));
+  padding:calc(env(safe-area-inset-top) + 16px) 20px 8px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;}
+.topbar h1{font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:700;letter-spacing:.5px;margin:0;font-style:italic;}
+.topbar .sub{font-size:10px;color:var(--ink-dim);letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;}
+.topactions{display:flex;gap:8px;}
+.tbtn{background:var(--panel-raised);border:1px solid var(--line);color:var(--ink);border-radius:18px;
+  padding:8px 13px;font-size:12px;font-weight:600;letter-spacing:.3px;}
+.tbtn.primary{background:var(--gold);border-color:var(--gold);color:#141414;}
+
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ---------- day tabs ---------- */
+.daytabs{display:flex;gap:6px;overflow-x:auto;padding:12px 20px 6px;scrollbar-width:none;}
 .daytabs::-webkit-scrollbar{display:none;}
-.daytab{
-  flex:0 0 auto; padding:9px 14px; border-radius:20px; font-size:13px; font-weight:600;
-  border:1px solid var(--line); background:var(--panel); color:var(--ink-dim);
-  white-space:nowrap; transition:all .15s ease;
-}
-.daytab.active{color:#0d0d0d; border-color:transparent;}
-.daytab[data-color="push"].active{background:var(--push);}
-.daytab[data-color="pull"].active{background:var(--pull);}
-.daytab[data-color="legs"].active{background:var(--legs);}
-.daytab[data-color="cardio"].active{background:var(--cardio);}
-.daytab[data-color="full"].active{background:var(--full);}
-.daytab[data-color="rest"].active{background:var(--rest); color:var(--ink);}
+.daytab{flex:0 0 auto;padding:9px 14px;border-radius:20px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);}
+.daytab.active{color:#141414;background:var(--acc,var(--gold));border-color:var(--acc,var(--gold));}
 
-.dayhead{padding:18px 20px 4px;}
+/* ---------- day header ---------- */
+.dayhead{padding:12px 20px 4px;}
 .dayhead .label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-dim);}
-.dayhead h2{margin:2px 0 0; font-size:22px; font-family:Georgia,serif; font-style:italic;}
-.dayhead .venue{font-size:12px;color:var(--gold);margin-top:4px;}
+.dayhead h2{font-family:Georgia,serif;font-style:italic;font-size:24px;margin:4px 0 2px;}
+.dayhead .venue{font-size:12px;color:var(--ink-dim);}
+.progress{margin:12px 20px 4px;}
+.progress-track{height:6px;border-radius:3px;background:var(--panel-raised);overflow:hidden;}
+.progress-fill{height:100%;width:0;background:var(--acc,var(--gold));border-radius:3px;transition:width .25s;}
+.progress-label{font-size:11px;color:var(--ink-dim);margin-top:5px;letter-spacing:1px;}
 
-.progress-wrap{padding:14px 20px 4px;}
-.progress-track{height:6px;background:var(--panel);border-radius:4px;overflow:hidden;}
-.progress-fill{height:100%;border-radius:4px;transition:width .3s ease;background:var(--gold);}
-.progress-label{font-size:11px;color:var(--ink-dim);margin-top:6px;text-align:right;}
+/* ---------- sections & exercise cards ---------- */
+.seclabel{display:flex;align-items:center;gap:10px;padding:18px 20px 6px;}
+.seclabel .txt{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--acc,var(--gold));font-weight:700;}
+.seclabel .rule{flex:1;height:1px;background:var(--line);}
+.exlist{padding:0 16px;}
+.exercise{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin:8px 0;}
+.exercise.done{opacity:.45;}
+.ex-top{display:flex;gap:12px;align-items:flex-start;}
+.checkbox{flex:0 0 26px;height:26px;border-radius:8px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;
+  font-size:15px;color:#141414;margin-top:2px;}
+.checkbox.checked{background:var(--acc,var(--gold));border-color:var(--acc,var(--gold));}
+.ex-name{font-size:15px;font-weight:600;line-height:1.25;}
+.ex-meta{font-size:12px;color:var(--ink-dim);margin-top:2px;}
+.ex-controls{display:flex;gap:8px;margin-top:11px;}
+.weight-field{display:flex;align-items:center;background:var(--panel-raised);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+.weight-field button{width:34px;height:38px;background:none;border:none;color:var(--ink);font-size:19px;}
+.weight-field input{width:52px;height:38px;background:none;border:none;color:var(--ink);font-size:15px;text-align:center;outline:none;}
+.weight-field .unit{font-size:11px;color:var(--ink-dim);padding-right:9px;}
+.notes-field{flex:1;height:38px;background:var(--panel-raised);border:1px solid var(--line);border-radius:10px;color:var(--ink);
+  font-size:13px;padding:0 11px;outline:none;min-width:0;}
+.rest-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 20px;margin:14px 4px;text-align:center;}
+.rest-card .big{font-family:Georgia,serif;font-style:italic;font-size:17px;line-height:1.5;color:var(--ink-dim);}
+.resetbar{padding:18px 20px 6px;}
+.resetbtn{width:100%;padding:12px;background:none;border:1px dashed var(--line);border-radius:12px;color:var(--ink-dim);font-size:13px;}
 
-.exlist{padding:12px 20px 40px; display:flex; flex-direction:column; gap:10px;}
-.exercise{
-  background:var(--panel); border:1px solid var(--line); border-radius:14px;
-  padding:14px 16px; transition:opacity .2s ease;
+/* ---------- splits screen ---------- */
+.pagepad{padding:6px 20px;}
+.splitcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;margin:10px 0;}
+.splitcard .nm{font-size:16px;font-weight:700;}
+.splitcard .info{font-size:12px;color:var(--ink-dim);margin-top:3px;}
+.splitcard .row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.chip{padding:8px 13px;border-radius:16px;border:1px solid var(--line);background:var(--panel-raised);color:var(--ink);font-size:12px;font-weight:600;}
+.chip.gold{background:var(--gold);border-color:var(--gold);color:#141414;}
+.chip.danger{color:#e8543c;border-color:#4a2620;}
+.activepill{display:inline-block;font-size:10px;letter-spacing:1.5px;color:#141414;background:var(--gold);
+  border-radius:10px;padding:3px 9px;margin-left:8px;vertical-align:middle;font-weight:700;}
+.bigcta{display:block;width:100%;padding:16px;border-radius:14px;background:var(--gold);border:none;color:#141414;
+  font-size:15px;font-weight:700;margin:14px 0;}
+.subtle{font-size:12px;color:var(--ink-dim);line-height:1.5;}
+
+/* ---------- wizard ---------- */
+.wizq{font-family:Georgia,serif;font-style:italic;font-size:20px;margin:18px 0 12px;}
+.textin{width:100%;padding:13px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;outline:none;}
+.textin:focus{border-color:var(--gold);}
+.countgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:10px;}
+.countbtn{padding:18px 0;border-radius:14px;background:var(--panel);border:1px solid var(--line);color:var(--ink);font-size:19px;font-weight:700;}
+.countbtn.sel{background:var(--gold);border-color:var(--gold);color:#141414;}
+.dayrow{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin:9px 0;}
+.dayrow .top{display:flex;align-items:center;gap:9px;}
+.dayrow .num{font-size:11px;color:var(--ink-dim);letter-spacing:1px;white-space:nowrap;}
+.dayrow input.dname{flex:1;background:var(--panel-raised);border:1px solid var(--line);border-radius:9px;color:var(--ink);
+  padding:9px 11px;font-size:14px;outline:none;min-width:0;}
+.dotrow{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap;}
+.dot{width:24px;height:24px;border-radius:50%;border:2px solid transparent;}
+.dot.sel{border-color:var(--ink);}
+.wkrow{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap;}
+.wk{padding:6px 9px;border-radius:12px;background:var(--panel-raised);border:1px solid var(--line);color:var(--ink-dim);font-size:11px;font-weight:700;}
+.wk.sel{background:var(--ink);color:#141414;border-color:var(--ink);}
+
+/* ---------- day editor ---------- */
+.editsec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin:11px 0;}
+.editsec .shead{display:flex;gap:8px;align-items:center;}
+.editsec input.sname{flex:1;background:var(--panel-raised);border:1px solid var(--line);border-radius:9px;color:var(--ink);
+  padding:9px 11px;font-size:14px;font-weight:700;outline:none;min-width:0;}
+.mini{width:34px;height:34px;border-radius:9px;background:var(--panel-raised);border:1px solid var(--line);color:var(--ink-dim);font-size:15px;flex:0 0 auto;}
+.mini.x{color:#e8543c;}
+.edrow{display:flex;gap:9px;align-items:center;margin-top:10px;}
+.edthumb{width:44px;height:44px;border-radius:9px;object-fit:cover;background:var(--panel-raised);flex:0 0 auto;border:1px solid var(--line);}
+.edthumb.ph{display:flex;align-items:center;justify-content:center;font-size:19px;}
+.edinfo{flex:1;min-width:0;}
+.edname{font-size:13.5px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.edsr{display:flex;gap:6px;margin-top:5px;align-items:center;}
+.edsr input{width:44px;background:var(--panel-raised);border:1px solid var(--line);border-radius:7px;color:var(--ink);
+  padding:6px 4px;font-size:12px;text-align:center;outline:none;}
+.edsr .x{font-size:11px;color:var(--ink-dim);}
+.edsr input.reps{width:56px;}
+.wtog{font-size:10px;padding:5px 8px;border-radius:9px;border:1px solid var(--line);background:var(--panel-raised);color:var(--ink-dim);font-weight:700;}
+.wtog.on{background:var(--gold);border-color:var(--gold);color:#141414;}
+.edbtns{display:flex;flex-direction:column;gap:5px;flex:0 0 auto;}
+.addexbtn{width:100%;margin-top:12px;padding:11px;border-radius:11px;border:1px dashed var(--line);background:none;color:var(--gold);font-size:13px;font-weight:600;}
+.addsecbtn{width:100%;margin:14px 0;padding:14px;border-radius:13px;border:1px dashed var(--gold);background:none;color:var(--gold);font-size:14px;font-weight:700;}
+
+/* ---------- picker ---------- */
+.sheet{position:fixed;inset:0;background:var(--bg);z-index:50;display:none;flex-direction:column;}
+.sheet.open{display:flex;}
+.sheethead{padding:calc(env(safe-area-inset-top) + 14px) 16px 10px;border-bottom:1px solid var(--line);}
+.sheethead .row1{display:flex;align-items:center;gap:10px;}
+.sheethead h3{font-family:Georgia,serif;font-style:italic;margin:0;font-size:19px;flex:1;}
+.searchin{width:100%;margin-top:11px;padding:11px 13px;background:var(--panel);border:1px solid var(--line);border-radius:11px;color:var(--ink);font-size:14px;outline:none;}
+.groupchips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none;border-bottom:1px solid var(--line);}
+.groupchips::-webkit-scrollbar{display:none;}
+.gchip{flex:0 0 auto;padding:8px 13px;border-radius:16px;background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);font-size:12px;font-weight:600;}
+.gchip.sel{background:var(--ink);color:#141414;border-color:var(--ink);}
+.pickscroll{flex:1;overflow-y:auto;padding:6px 16px 40px;}
+.pickrow{display:flex;gap:11px;align-items:center;padding:9px 0;border-bottom:1px solid #1a1a1a;}
+.pickrow .nm{font-size:14px;font-weight:600;line-height:1.25;}
+.pickrow .eq{font-size:11px;color:var(--ink-dim);margin-top:2px;text-transform:capitalize;}
+.pickadd{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--gold);background:none;color:var(--gold);font-size:19px;line-height:1;}
+.morebtn{width:100%;padding:13px;margin:10px 0 30px;border-radius:11px;border:1px solid var(--line);background:var(--panel);color:var(--ink-dim);font-size:13px;}
+.customrow{background:var(--panel);border:1px dashed var(--gold);border-radius:12px;padding:12px;margin:10px 0;}
+.customrow .r{display:flex;gap:8px;margin-top:9px;}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 24px);left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:#141414;font-size:13px;font-weight:700;padding:11px 19px;border-radius:22px;z-index:99;
+  transition:transform .25s;white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.hintbar{margin:10px 20px 0;background:#1a1710;border:1px solid #3a3220;border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--gold);line-height:1.45;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1 id="appTitle">Cee Fit</h1>
+    <div class="sub">Kind · Curious · Unique</div>
+  </div>
+  <div class="topactions" id="topActions"></div>
+</div>
+
+<!-- ============ WORKOUT ============ -->
+<div class="screen active" id="screenWorkout">
+  <div class="daytabs" id="daytabs"></div>
+  <div class="dayhead" id="dayhead"></div>
+  <div class="progress" id="progressWrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel"></div>
+  </div>
+  <div id="workoutBody"></div>
+  <div class="resetbar" id="resetbar"><button class="resetbtn" onclick="resetToday()">Reset today's checkmarks</button></div>
+</div>
+
+<!-- ============ SPLITS ============ -->
+<div class="screen" id="screenSplits">
+  <div class="pagepad">
+    <button class="bigcta" onclick="startWizard()">+ Create new split</button>
+    <div id="splitList"></div>
+    <div style="margin-top:26px">
+      <div class="subtle" style="margin-bottom:8px">Your data lives on this phone. Back it up before clearing the browser or switching devices.</div>
+      <div style="display:flex;gap:8px">
+        <button class="chip" onclick="backupData()">Backup data</button>
+        <button class="chip" onclick="document.getElementById('restoreFile').click()">Restore</button>
+        <input type="file" id="restoreFile" accept=".json,application/json" style="display:none" onchange="restoreData(this)">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ WIZARD ============ -->
+<div class="screen" id="screenWizard">
+  <div class="pagepad">
+    <div id="wizStep1">
+      <div class="wizq">Name your split</div>
+      <input class="textin" id="wizName" placeholder="e.g. My 5-Day Split" maxlength="30">
+      <div class="wizq">How many workout days?</div>
+      <div class="countgrid" id="countGrid"></div>
+      <button class="bigcta" style="margin-top:22px" onclick="wizToStep2()">Next: name your days</button>
+    </div>
+    <div id="wizStep2" style="display:none">
+      <div class="wizq">Name each day</div>
+      <div class="subtle" style="margin-bottom:4px">Give each day a focus, pick a color, and (optional) pin it to a weekday so it auto-opens.</div>
+      <div id="wizDays"></div>
+      <button class="bigcta" onclick="wizCreate()">Create split</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DAY EDITOR ============ -->
+<div class="screen" id="screenDayEdit">
+  <div class="pagepad">
+    <div class="wizq" id="editDayTitle" style="margin-bottom:2px">Edit day</div>
+    <div class="subtle" style="margin-bottom:4px">Sections keep your day organized — Warm-up, Chest, Cardio, whatever you want. Add exercises to each from the library.</div>
+    <div id="editSections"></div>
+    <button class="addsecbtn" onclick="addSection()">+ Add section</button>
+  </div>
+</div>
+
+<!-- ============ EXERCISE PICKER ============ -->
+<div class="sheet" id="pickerSheet">
+  <div class="sheethead">
+    <div class="row1">
+      <h3 id="pickerTitle">Add exercises</h3>
+      <button class="tbtn primary" onclick="closePicker()">Done</button>
+    </div>
+    <input class="searchin" id="pickSearch" placeholder="Search 870+ exercises..." oninput="pickerFilterChanged()">
+  </div>
+  <div class="groupchips" id="groupChips"></div>
+  <div class="pickscroll" id="pickScroll"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= EXERCISE DATABASE ================= */
+const IMG_BASE = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
+const EXDB = [["3/4 Sit-Up","3_4_Sit-Up","abs","bodyweight"],["90/90 Hamstring","90_90_Hamstring","stretch","bodyweight"],["Ab Crunch Machine","Ab_Crunch_Machine","abs","machine"],["Ab Roller","Ab_Roller","abs","other"],["Adductor","Adductor","stretch","foam roll"],["Adductor/Groin","Adductor_Groin","stretch",""],["Advanced Kettlebell Windmill","Advanced_Kettlebell_Windmill","abs","kettlebell"],["Air Bike","Air_Bike","abs","bodyweight"],["All Fours Quad Stretch","All_Fours_Quad_Stretch","stretch","bodyweight"],["Alternate Hammer Curl","Alternate_Hammer_Curl","biceps","dumbbell"],["Alternate Heel Touchers","Alternate_Heel_Touchers","abs","bodyweight"],["Alternate Incline Dumbbell Curl","Alternate_Incline_Dumbbell_Curl","biceps","dumbbell"],["Alternate Leg Diagonal Bound","Alternate_Leg_Diagonal_Bound","quads",""],["Alternating Cable Shoulder Press","Alternating_Cable_Shoulder_Press","shoulders","cable"],["Alternating Deltoid Raise","Alternating_Deltoid_Raise","shoulders","dumbbell"],["Alternating Floor Press","Alternating_Floor_Press","chest","kettlebell"],["Alternating Hang Clean","Alternating_Hang_Clean","hams","kettlebell"],["Alternating Kettlebell Press","Alternating_Kettlebell_Press","shoulders","kettlebell"],["Alternating Kettlebell Row","Alternating_Kettlebell_Row","back","kettlebell"],["Alternating Renegade Row","Alternating_Renegade_Row","back","kettlebell"],["Ankle Circles","Ankle_Circles","stretch",""],["Ankle On The Knee","Ankle_On_The_Knee","stretch",""],["Anterior Tibialis-SMR","Anterior_Tibialis-SMR","stretch","other"],["Anti-Gravity Press","Anti-Gravity_Press","shoulders","barbell"],["Arm Circles","Arm_Circles","stretch",""],["Arnold Dumbbell Press","Arnold_Dumbbell_Press","shoulders","dumbbell"],["Around The Worlds","Around_The_Worlds","chest","dumbbell"],["Atlas Stone Trainer","Atlas_Stone_Trainer","back","other"],["Atlas Stones","Atlas_Stones","back","other"],["Axle Deadlift","Axle_Deadlift","back","other"],["Back Flyes - With Bands","Back_Flyes_-_With_Bands","shoulders","bands"],["Backward Drag","Backward_Drag","quads","other"],["Backward Medicine Ball Throw","Backward_Medicine_Ball_Throw","shoulders","med ball"],["Balance Board","Balance_Board","calves","other"],["Ball Leg Curl","Ball_Leg_Curl","hams","ball"],["Band Assisted Pull-Up","Band_Assisted_Pull-Up","back","other"],["Band Good Morning","Band_Good_Morning","hams","bands"],["Band Good Morning (Pull Through)","Band_Good_Morning_Pull_Through","hams","bands"],["Band Hip Adductions","Band_Hip_Adductions","hips","bands"],["Band Pull Apart","Band_Pull_Apart","shoulders","bands"],["Band Skull Crusher","Band_Skull_Crusher","triceps","bands"],["Barbell Ab Rollout","Barbell_Ab_Rollout","abs","barbell"],["Barbell Ab Rollout - On Knees","Barbell_Ab_Rollout_-_On_Knees","abs","barbell"],["Barbell Bench Press - Medium Grip","Barbell_Bench_Press_-_Medium_Grip","chest","barbell"],["Barbell Curl","Barbell_Curl","biceps","barbell"],["Barbell Curls Lying Against An Incline","Barbell_Curls_Lying_Against_An_Incline","biceps","barbell"],["Barbell Deadlift","Barbell_Deadlift","back","barbell"],["Barbell Full Squat","Barbell_Full_Squat","quads","barbell"],["Barbell Glute Bridge","Barbell_Glute_Bridge","glutes","barbell"],["Barbell Guillotine Bench Press","Barbell_Guillotine_Bench_Press","chest","barbell"],["Barbell Hack Squat","Barbell_Hack_Squat","quads","barbell"],["Barbell Hip Thrust","Barbell_Hip_Thrust","glutes","barbell"],["Barbell Incline Bench Press - Medium Grip","Barbell_Incline_Bench_Press_-_Medium_Grip","chest","barbell"],["Barbell Incline Shoulder Raise","Barbell_Incline_Shoulder_Raise","shoulders","barbell"],["Barbell Lunge","Barbell_Lunge","quads","barbell"],["Barbell Rear Delt Row","Barbell_Rear_Delt_Row","shoulders","barbell"],["Barbell Rollout from Bench","Barbell_Rollout_from_Bench","abs","barbell"],["Barbell Seated Calf Raise","Barbell_Seated_Calf_Raise","calves","barbell"],["Barbell Shoulder Press","Barbell_Shoulder_Press","shoulders","barbell"],["Barbell Shrug","Barbell_Shrug","back","barbell"],["Barbell Shrug Behind The Back","Barbell_Shrug_Behind_The_Back","back","barbell"],["Barbell Side Bend","Barbell_Side_Bend","abs","barbell"],["Barbell Side Split Squat","Barbell_Side_Split_Squat","quads","barbell"],["Barbell Squat","Barbell_Squat","quads","barbell"],["Barbell Squat To A Bench","Barbell_Squat_To_A_Bench","quads","barbell"],["Barbell Step Ups","Barbell_Step_Ups","quads","barbell"],["Barbell Walking Lunge","Barbell_Walking_Lunge","quads","barbell"],["Battling Ropes","Battling_Ropes","shoulders","other"],["Bear Crawl Sled Drags","Bear_Crawl_Sled_Drags","quads","other"],["Behind Head Chest Stretch","Behind_Head_Chest_Stretch","stretch","other"],["Bench Dips","Bench_Dips","triceps","bodyweight"],["Bench Jump","Bench_Jump","quads","bodyweight"],["Bench Press - Powerlifting","Bench_Press_-_Powerlifting","triceps","barbell"],["Bench Press - With Bands","Bench_Press_-_With_Bands","chest","bands"],["Bench Press with Chains","Bench_Press_with_Chains","triceps","barbell"],["Bench Sprint","Bench_Sprint","quads","other"],["Bent-Arm Barbell Pullover","Bent-Arm_Barbell_Pullover","back","barbell"],["Bent-Arm Dumbbell Pullover","Bent-Arm_Dumbbell_Pullover","chest","dumbbell"],["Bent-Knee Hip Raise","Bent-Knee_Hip_Raise","abs","bodyweight"],["Bent Over Barbell Row","Bent_Over_Barbell_Row","back","barbell"],["Bent Over Dumbbell Rear Delt Raise With Head On Bench","Bent_Over_Dumbbell_Rear_Delt_Raise_With_Head_On_Bench","shoulders","dumbbell"],["Bent Over Low-Pulley Side Lateral","Bent_Over_Low-Pulley_Side_Lateral","shoulders","cable"],["Bent Over One-Arm Long Bar Row","Bent_Over_One-Arm_Long_Bar_Row","back","barbell"],["Bent Over Two-Arm Long Bar Row","Bent_Over_Two-Arm_Long_Bar_Row","back","barbell"],["Bent Over Two-Dumbbell Row","Bent_Over_Two-Dumbbell_Row","back","dumbbell"],["Bent Over Two-Dumbbell Row With Palms In","Bent_Over_Two-Dumbbell_Row_With_Palms_In","back","dumbbell"],["Bent Press","Bent_Press","abs","kettlebell"],["Bicycling","Bicycling","cardio","other"],["Bicycling, Stationary","Bicycling_Stationary","cardio","machine"],["Board Press","Board_Press","triceps","barbell"],["Body-Up","Body-Up","triceps","bodyweight"],["Body Tricep Press","Body_Tricep_Press","triceps","bodyweight"],["Bodyweight Flyes","Bodyweight_Flyes","chest","ez-bar"],["Bodyweight Mid Row","Bodyweight_Mid_Row","back","other"],["Bodyweight Squat","Bodyweight_Squat","quads","bodyweight"],["Bodyweight Walking Lunge","Bodyweight_Walking_Lunge","quads",""],["Bosu Ball Cable Crunch With Side Bends","Bosu_Ball_Cable_Crunch_With_Side_Bends","abs","cable"],["Bottoms-Up Clean From The Hang Position","Bottoms-Up_Clean_From_The_Hang_Position","forearms","kettlebell"],["Bottoms Up","Bottoms_Up","abs","bodyweight"],["Box Jump (Multiple Response)","Box_Jump_Multiple_Response","hams","other"],["Box Skip","Box_Skip","hams","other"],["Box Squat","Box_Squat","quads","barbell"],["Box Squat with Bands","Box_Squat_with_Bands","quads","barbell"],["Box Squat with Chains","Box_Squat_with_Chains","quads","barbell"],["Brachialis-SMR","Brachialis-SMR","stretch","foam roll"],["Bradford/Rocky Presses","Bradford_Rocky_Presses","shoulders","barbell"],["Butt-Ups","Butt-Ups","abs","bodyweight"],["Butt Lift (Bridge)","Butt_Lift_Bridge","glutes","bodyweight"],["Butterfly","Butterfly","chest","machine"],["Cable Chest Press","Cable_Chest_Press","chest","cable"],["Cable Crossover","Cable_Crossover","chest","cable"],["Cable Crunch","Cable_Crunch","abs","cable"],["Cable Deadlifts","Cable_Deadlifts","quads","cable"],["Cable Hammer Curls - Rope Attachment","Cable_Hammer_Curls_-_Rope_Attachment","biceps","cable"],["Cable Hip Adduction","Cable_Hip_Adduction","quads","cable"],["Cable Incline Pushdown","Cable_Incline_Pushdown","back","cable"],["Cable Incline Triceps Extension","Cable_Incline_Triceps_Extension","triceps","cable"],["Cable Internal Rotation","Cable_Internal_Rotation","shoulders","cable"],["Cable Iron Cross","Cable_Iron_Cross","chest","cable"],["Cable Judo Flip","Cable_Judo_Flip","abs","cable"],["Cable Lying Triceps Extension","Cable_Lying_Triceps_Extension","triceps","cable"],["Cable One Arm Tricep Extension","Cable_One_Arm_Tricep_Extension","triceps","cable"],["Cable Preacher Curl","Cable_Preacher_Curl","biceps","cable"],["Cable Rear Delt Fly","Cable_Rear_Delt_Fly","shoulders","cable"],["Cable Reverse Crunch","Cable_Reverse_Crunch","abs","cable"],["Cable Rope Overhead Triceps Extension","Cable_Rope_Overhead_Triceps_Extension","triceps","cable"],["Cable Rope Rear-Delt Rows","Cable_Rope_Rear-Delt_Rows","shoulders","cable"],["Cable Russian Twists","Cable_Russian_Twists","abs","cable"],["Cable Seated Crunch","Cable_Seated_Crunch","abs","cable"],["Cable Seated Lateral Raise","Cable_Seated_Lateral_Raise","shoulders","cable"],["Cable Shoulder Press","Cable_Shoulder_Press","shoulders","cable"],["Cable Shrugs","Cable_Shrugs","back","cable"],["Cable Wrist Curl","Cable_Wrist_Curl","forearms","cable"],["Calf-Machine Shoulder Shrug","Calf-Machine_Shoulder_Shrug","back","machine"],["Calf Press","Calf_Press","calves","machine"],["Calf Press On The Leg Press Machine","Calf_Press_On_The_Leg_Press_Machine","calves","machine"],["Calf Raise On A Dumbbell","Calf_Raise_On_A_Dumbbell","calves","dumbbell"],["Calf Raises - With Bands","Calf_Raises_-_With_Bands","calves","bands"],["Calf Stretch Elbows Against Wall","Calf_Stretch_Elbows_Against_Wall","stretch",""],["Calf Stretch Hands Against Wall","Calf_Stretch_Hands_Against_Wall","stretch",""],["Calves-SMR","Calves-SMR","stretch","foam roll"],["Car Deadlift","Car_Deadlift","quads","other"],["Car Drivers","Car_Drivers","shoulders","barbell"],["Carioca Quick Step","Carioca_Quick_Step","hips",""],["Cat Stretch","Cat_Stretch","stretch",""],["Catch and Overhead Throw","Catch_and_Overhead_Throw","back","med ball"],["Chain Handle Extension","Chain_Handle_Extension","triceps","other"],["Chain Press","Chain_Press","chest","other"],["Chair Leg Extended Stretch","Chair_Leg_Extended_Stretch","stretch","other"],["Chair Lower Back Stretch","Chair_Lower_Back_Stretch","stretch",""],["Chair Squat","Chair_Squat","quads","machine"],["Chair Upper Body Stretch","Chair_Upper_Body_Stretch","stretch","other"],["Chest And Front Of Shoulder Stretch","Chest_And_Front_Of_Shoulder_Stretch","stretch","other"],["Chest Push from 3 point stance","Chest_Push_from_3_point_stance","chest","med ball"],["Chest Push (multiple response)","Chest_Push_multiple_response","chest","med ball"],["Chest Push (single response)","Chest_Push_single_response","chest","med ball"],["Chest Push with Run Release","Chest_Push_with_Run_Release","chest","med ball"],["Chest Stretch on Stability Ball","Chest_Stretch_on_Stability_Ball","stretch","ball"],["Child's Pose","Childs_Pose","stretch",""],["Chin-Up","Chin-Up","back","bodyweight"],["Chin To Chest Stretch","Chin_To_Chest_Stretch","stretch",""],["Circus Bell","Circus_Bell","shoulders","other"],["Clean","Clean","hams","barbell"],["Clean Deadlift","Clean_Deadlift","hams","barbell"],["Clean Pull","Clean_Pull","quads","barbell"],["Clean Shrug","Clean_Shrug","back","barbell"],["Clean and Jerk","Clean_and_Jerk","shoulders","barbell"],["Clean and Press","Clean_and_Press","shoulders","barbell"],["Clean from Blocks","Clean_from_Blocks","quads","barbell"],["Clock Push-Up","Clock_Push-Up","chest","bodyweight"],["Close-Grip Barbell Bench Press","Close-Grip_Barbell_Bench_Press","triceps","barbell"],["Close-Grip Dumbbell Press","Close-Grip_Dumbbell_Press","triceps","dumbbell"],["Close-Grip EZ-Bar Curl with Band","Close-Grip_EZ-Bar_Curl_with_Band","biceps","ez-bar"],["Close-Grip EZ-Bar Press","Close-Grip_EZ-Bar_Press","triceps","ez-bar"],["Close-Grip EZ Bar Curl","Close-Grip_EZ_Bar_Curl","biceps","barbell"],["Close-Grip Front Lat Pulldown","Close-Grip_Front_Lat_Pulldown","back","cable"],["Close-Grip Push-Up off of a Dumbbell","Close-Grip_Push-Up_off_of_a_Dumbbell","triceps","bodyweight"],["Close-Grip Standing Barbell Curl","Close-Grip_Standing_Barbell_Curl","biceps","barbell"],["Cocoons","Cocoons","abs","bodyweight"],["Conan's Wheel","Conans_Wheel","quads","other"],["Concentration Curls","Concentration_Curls","biceps","dumbbell"],["Cross-Body Crunch","Cross-Body_Crunch","abs","bodyweight"],["Cross Body Hammer Curl","Cross_Body_Hammer_Curl","biceps","dumbbell"],["Cross Over - With Bands","Cross_Over_-_With_Bands","chest","bands"],["Crossover Reverse Lunge","Crossover_Reverse_Lunge","stretch",""],["Crucifix","Crucifix","shoulders","other"],["Crunch - Hands Overhead","Crunch_-_Hands_Overhead","abs","bodyweight"],["Crunch - Legs On Exercise Ball","Crunch_-_Legs_On_Exercise_Ball","abs","bodyweight"],["Crunches","Crunches","abs","bodyweight"],["Cuban Press","Cuban_Press","shoulders","dumbbell"],["Dancer's Stretch","Dancers_Stretch","stretch",""],["Dead Bug","Dead_Bug","abs","bodyweight"],["Deadlift with Bands","Deadlift_with_Bands","back","barbell"],["Deadlift with Chains","Deadlift_with_Chains","back","barbell"],["Decline Barbell Bench Press","Decline_Barbell_Bench_Press","chest","barbell"],["Decline Close-Grip Bench To Skull Crusher","Decline_Close-Grip_Bench_To_Skull_Crusher","triceps","barbell"],["Decline Crunch","Decline_Crunch","abs","bodyweight"],["Decline Dumbbell Bench Press","Decline_Dumbbell_Bench_Press","chest","dumbbell"],["Decline Dumbbell Flyes","Decline_Dumbbell_Flyes","chest","dumbbell"],["Decline Dumbbell Triceps Extension","Decline_Dumbbell_Triceps_Extension","triceps","dumbbell"],["Decline EZ Bar Triceps Extension","Decline_EZ_Bar_Triceps_Extension","triceps","barbell"],["Decline Oblique Crunch","Decline_Oblique_Crunch","abs","bodyweight"],["Decline Push-Up","Decline_Push-Up","chest",""],["Decline Reverse Crunch","Decline_Reverse_Crunch","abs","bodyweight"],["Decline Smith Press","Decline_Smith_Press","chest","machine"],["Deficit Deadlift","Deficit_Deadlift","back","barbell"],["Depth Jump Leap","Depth_Jump_Leap","quads","other"],["Dip Machine","Dip_Machine","triceps","machine"],["Dips - Chest Version","Dips_-_Chest_Version","chest","other"],["Dips - Triceps Version","Dips_-_Triceps_Version","triceps","bodyweight"],["Donkey Calf Raises","Donkey_Calf_Raises","calves","other"],["Double Kettlebell Alternating Hang Clean","Double_Kettlebell_Alternating_Hang_Clean","hams","kettlebell"],["Double Kettlebell Jerk","Double_Kettlebell_Jerk","shoulders","kettlebell"],["Double Kettlebell Push Press","Double_Kettlebell_Push_Press","shoulders","kettlebell"],["Double Kettlebell Snatch","Double_Kettlebell_Snatch","shoulders","kettlebell"],["Double Kettlebell Windmill","Double_Kettlebell_Windmill","abs","kettlebell"],["Double Leg Butt Kick","Double_Leg_Butt_Kick","quads","bodyweight"],["Downward Facing Balance","Downward_Facing_Balance","glutes","ball"],["Drag Curl","Drag_Curl","biceps","barbell"],["Drop Push","Drop_Push","chest","other"],["Dumbbell Alternate Bicep Curl","Dumbbell_Alternate_Bicep_Curl","biceps","dumbbell"],["Dumbbell Bench Press","Dumbbell_Bench_Press","chest","dumbbell"],["Dumbbell Bench Press with Neutral Grip","Dumbbell_Bench_Press_with_Neutral_Grip","chest","dumbbell"],["Dumbbell Bicep Curl","Dumbbell_Bicep_Curl","biceps","dumbbell"],["Dumbbell Clean","Dumbbell_Clean","hams","dumbbell"],["Dumbbell Floor Press","Dumbbell_Floor_Press","triceps","dumbbell"],["Dumbbell Flyes","Dumbbell_Flyes","chest","dumbbell"],["Dumbbell Incline Row","Dumbbell_Incline_Row","back","dumbbell"],["Dumbbell Incline Shoulder Raise","Dumbbell_Incline_Shoulder_Raise","shoulders","dumbbell"],["Dumbbell Lunges","Dumbbell_Lunges","quads","dumbbell"],["Dumbbell Lying One-Arm Rear Lateral Raise","Dumbbell_Lying_One-Arm_Rear_Lateral_Raise","shoulders","dumbbell"],["Dumbbell Lying Pronation","Dumbbell_Lying_Pronation","forearms","dumbbell"],["Dumbbell Lying Rear Lateral Raise","Dumbbell_Lying_Rear_Lateral_Raise","shoulders","dumbbell"],["Dumbbell Lying Supination","Dumbbell_Lying_Supination","forearms","dumbbell"],["Dumbbell One-Arm Shoulder Press","Dumbbell_One-Arm_Shoulder_Press","shoulders","dumbbell"],["Dumbbell One-Arm Triceps Extension","Dumbbell_One-Arm_Triceps_Extension","triceps","dumbbell"],["Dumbbell One-Arm Upright Row","Dumbbell_One-Arm_Upright_Row","shoulders","dumbbell"],["Dumbbell Prone Incline Curl","Dumbbell_Prone_Incline_Curl","biceps","dumbbell"],["Dumbbell Raise","Dumbbell_Raise","shoulders","dumbbell"],["Dumbbell Rear Lunge","Dumbbell_Rear_Lunge","quads","dumbbell"],["Dumbbell Scaption","Dumbbell_Scaption","shoulders","dumbbell"],["Dumbbell Seated Box Jump","Dumbbell_Seated_Box_Jump","quads","dumbbell"],["Dumbbell Seated One-Leg Calf Raise","Dumbbell_Seated_One-Leg_Calf_Raise","calves","dumbbell"],["Dumbbell Shoulder Press","Dumbbell_Shoulder_Press","shoulders","dumbbell"],["Dumbbell Shrug","Dumbbell_Shrug","back","dumbbell"],["Dumbbell Side Bend","Dumbbell_Side_Bend","abs","dumbbell"],["Dumbbell Squat","Dumbbell_Squat","quads","dumbbell"],["Dumbbell Squat To A Bench","Dumbbell_Squat_To_A_Bench","quads","dumbbell"],["Dumbbell Step Ups","Dumbbell_Step_Ups","quads","dumbbell"],["Dumbbell Tricep Extension -Pronated Grip","Dumbbell_Tricep_Extension_-Pronated_Grip","triceps","dumbbell"],["Dynamic Back Stretch","Dynamic_Back_Stretch","stretch",""],["Dynamic Chest Stretch","Dynamic_Chest_Stretch","stretch",""],["EZ-Bar Curl","EZ-Bar_Curl","biceps","ez-bar"],["EZ-Bar Skullcrusher","EZ-Bar_Skullcrusher","triceps","ez-bar"],["Elbow Circles","Elbow_Circles","stretch",""],["Elbow to Knee","Elbow_to_Knee","abs","bodyweight"],["Elbows Back","Elbows_Back","stretch",""],["Elevated Back Lunge","Elevated_Back_Lunge","quads","barbell"],["Elevated Cable Rows","Elevated_Cable_Rows","back","cable"],["Elliptical Trainer","Elliptical_Trainer","cardio","machine"],["Exercise Ball Crunch","Exercise_Ball_Crunch","abs","ball"],["Exercise Ball Pull-In","Exercise_Ball_Pull-In","abs","ball"],["Extended Range One-Arm Kettlebell Floor Press","Extended_Range_One-Arm_Kettlebell_Floor_Press","chest","kettlebell"],["External Rotation","External_Rotation","shoulders","dumbbell"],["External Rotation with Band","External_Rotation_with_Band","shoulders","bands"],["External Rotation with Cable","External_Rotation_with_Cable","shoulders","cable"],["Face Pull","Face_Pull","shoulders","cable"],["Farmer's Walk","Farmers_Walk","forearms","other"],["Fast Skipping","Fast_Skipping","quads","bodyweight"],["Finger Curls","Finger_Curls","forearms","barbell"],["Flat Bench Cable Flyes","Flat_Bench_Cable_Flyes","chest","cable"],["Flat Bench Leg Pull-In","Flat_Bench_Leg_Pull-In","abs","bodyweight"],["Flat Bench Lying Leg Raise","Flat_Bench_Lying_Leg_Raise","abs","bodyweight"],["Flexor Incline Dumbbell Curls","Flexor_Incline_Dumbbell_Curls","biceps","dumbbell"],["Floor Glute-Ham Raise","Floor_Glute-Ham_Raise","hams",""],["Floor Press","Floor_Press","triceps","barbell"],["Floor Press with Chains","Floor_Press_with_Chains","triceps","barbell"],["Flutter Kicks","Flutter_Kicks","glutes","bodyweight"],["Foot-SMR","Foot-SMR","stretch","other"],["Forward Drag with Press","Forward_Drag_with_Press","chest","other"],["Frankenstein Squat","Frankenstein_Squat","quads","barbell"],["Freehand Jump Squat","Freehand_Jump_Squat","quads","bodyweight"],["Frog Hops","Frog_Hops","stretch",""],["Frog Sit-Ups","Frog_Sit-Ups","abs","bodyweight"],["Front Barbell Squat","Front_Barbell_Squat","quads","barbell"],["Front Barbell Squat To A Bench","Front_Barbell_Squat_To_A_Bench","quads","barbell"],["Front Box Jump","Front_Box_Jump","hams","other"],["Front Cable Raise","Front_Cable_Raise","shoulders","cable"],["Front Cone Hops (or hurdle hops)","Front_Cone_Hops_or_hurdle_hops","quads","other"],["Front Dumbbell Raise","Front_Dumbbell_Raise","shoulders","dumbbell"],["Front Incline Dumbbell Raise","Front_Incline_Dumbbell_Raise","shoulders","dumbbell"],["Front Leg Raises","Front_Leg_Raises","stretch","bodyweight"],["Front Plate Raise","Front_Plate_Raise","shoulders","other"],["Front Raise And Pullover","Front_Raise_And_Pullover","chest","barbell"],["Front Squat (Clean Grip)","Front_Squat_Clean_Grip","quads","barbell"],["Front Squats With Two Kettlebells","Front_Squats_With_Two_Kettlebells","quads","kettlebell"],["Front Two-Dumbbell Raise","Front_Two-Dumbbell_Raise","shoulders","dumbbell"],["Full Range-Of-Motion Lat Pulldown","Full_Range-Of-Motion_Lat_Pulldown","back","cable"],["Gironda Sternum Chins","Gironda_Sternum_Chins","back","other"],["Glute Ham Raise","Glute_Ham_Raise","hams","machine"],["Glute Kickback","Glute_Kickback","glutes","bodyweight"],["Goblet Squat","Goblet_Squat","quads","kettlebell"],["Good Morning","Good_Morning","hams","barbell"],["Good Morning off Pins","Good_Morning_off_Pins","hams","barbell"],["Gorilla Chin/Crunch","Gorilla_Chin_Crunch","abs","bodyweight"],["Groin and Back Stretch","Groin_and_Back_Stretch","stretch",""],["Groiners","Groiners","stretch","bodyweight"],["Hack Squat","Hack_Squat","quads","machine"],["Hammer Curls","Hammer_Curls","biceps","dumbbell"],["Hammer Grip Incline DB Bench Press","Hammer_Grip_Incline_DB_Bench_Press","chest","dumbbell"],["Hamstring-SMR","Hamstring-SMR","stretch","foam roll"],["Hamstring Stretch","Hamstring_Stretch","stretch",""],["Handstand Push-Ups","Handstand_Push-Ups","shoulders","bodyweight"],["Hang Clean","Hang_Clean","quads","barbell"],["Hang Clean - Below the Knees","Hang_Clean_-_Below_the_Knees","quads","barbell"],["Hang Snatch","Hang_Snatch","hams","barbell"],["Hang Snatch - Below Knees","Hang_Snatch_-_Below_Knees","hams","barbell"],["Hanging Bar Good Morning","Hanging_Bar_Good_Morning","hams","barbell"],["Hanging Leg Raise","Hanging_Leg_Raise","abs","bodyweight"],["Hanging Pike","Hanging_Pike","abs","bodyweight"],["Heaving Snatch Balance","Heaving_Snatch_Balance","quads","barbell"],["Heavy Bag Thrust","Heavy_Bag_Thrust","chest","other"],["High Cable Curls","High_Cable_Curls","biceps","cable"],["Hip Circles (prone)","Hip_Circles_prone","stretch","bodyweight"],["Hip Extension with Bands","Hip_Extension_with_Bands","glutes","bands"],["Hip Flexion with Band","Hip_Flexion_with_Band","quads","bands"],["Hip Lift with Band","Hip_Lift_with_Band","glutes","bands"],["Hug A Ball","Hug_A_Ball","stretch","ball"],["Hug Knees To Chest","Hug_Knees_To_Chest","stretch",""],["Hurdle Hops","Hurdle_Hops","hams","other"],["Hyperextensions (Back Extensions)","Hyperextensions_Back_Extensions","back","other"],["Hyperextensions With No Hyperextension Bench","Hyperextensions_With_No_Hyperextension_Bench","back","bodyweight"],["IT Band and Glute Stretch","IT_Band_and_Glute_Stretch","stretch","other"],["Iliotibial Tract-SMR","Iliotibial_Tract-SMR","stretch","foam roll"],["Inchworm","Inchworm","stretch","bodyweight"],["Incline Barbell Triceps Extension","Incline_Barbell_Triceps_Extension","triceps","barbell"],["Incline Bench Pull","Incline_Bench_Pull","back","barbell"],["Incline Cable Chest Press","Incline_Cable_Chest_Press","chest","cable"],["Incline Cable Flye","Incline_Cable_Flye","chest","cable"],["Incline Dumbbell Bench With Palms Facing In","Incline_Dumbbell_Bench_With_Palms_Facing_In","chest","dumbbell"],["Incline Dumbbell Curl","Incline_Dumbbell_Curl","biceps","dumbbell"],["Incline Dumbbell Flyes","Incline_Dumbbell_Flyes","chest","dumbbell"],["Incline Dumbbell Flyes - With A Twist","Incline_Dumbbell_Flyes_-_With_A_Twist","chest","dumbbell"],["Incline Dumbbell Press","Incline_Dumbbell_Press","chest","dumbbell"],["Incline Hammer Curls","Incline_Hammer_Curls","biceps","dumbbell"],["Incline Inner Biceps Curl","Incline_Inner_Biceps_Curl","biceps","dumbbell"],["Incline Push-Up","Incline_Push-Up","chest","bodyweight"],["Incline Push-Up Close-Grip","Incline_Push-Up_Close-Grip","triceps","bodyweight"],["Incline Push-Up Depth Jump","Incline_Push-Up_Depth_Jump","chest","other"],["Incline Push-Up Medium","Incline_Push-Up_Medium","chest","bodyweight"],["Incline Push-Up Reverse Grip","Incline_Push-Up_Reverse_Grip","chest","bodyweight"],["Incline Push-Up Wide","Incline_Push-Up_Wide","chest","bodyweight"],["Intermediate Groin Stretch","Intermediate_Groin_Stretch","stretch","other"],["Intermediate Hip Flexor and Quad Stretch","Intermediate_Hip_Flexor_and_Quad_Stretch","stretch","other"],["Internal Rotation with Band","Internal_Rotation_with_Band","shoulders","bands"],["Inverted Row","Inverted_Row","back",""],["Inverted Row with Straps","Inverted_Row_with_Straps","back","other"],["Iron Cross","Iron_Cross","shoulders","dumbbell"],["Iron Crosses (stretch)","Iron_Crosses_stretch","stretch",""],["Isometric Chest Squeezes","Isometric_Chest_Squeezes","chest","bodyweight"],["Isometric Neck Exercise - Front And Back","Isometric_Neck_Exercise_-_Front_And_Back","shoulders","bodyweight"],["Isometric Neck Exercise - Sides","Isometric_Neck_Exercise_-_Sides","shoulders","bodyweight"],["Isometric Wipers","Isometric_Wipers","chest","bodyweight"],["JM Press","JM_Press","triceps","barbell"],["Jackknife Sit-Up","Jackknife_Sit-Up","abs","bodyweight"],["Janda Sit-Up","Janda_Sit-Up","abs","bodyweight"],["Jefferson Squats","Jefferson_Squats","quads","barbell"],["Jerk Balance","Jerk_Balance","shoulders","barbell"],["Jerk Dip Squat","Jerk_Dip_Squat","quads","barbell"],["Jogging, Treadmill","Jogging_Treadmill","cardio","machine"],["Keg Load","Keg_Load","back","other"],["Kettlebell Arnold Press","Kettlebell_Arnold_Press","shoulders","kettlebell"],["Kettlebell Dead Clean","Kettlebell_Dead_Clean","hams","kettlebell"],["Kettlebell Figure 8","Kettlebell_Figure_8","abs","kettlebell"],["Kettlebell Hang Clean","Kettlebell_Hang_Clean","hams","kettlebell"],["Kettlebell One-Legged Deadlift","Kettlebell_One-Legged_Deadlift","hams","kettlebell"],["Kettlebell Pass Between The Legs","Kettlebell_Pass_Between_The_Legs","abs","kettlebell"],["Kettlebell Pirate Ships","Kettlebell_Pirate_Ships","shoulders","kettlebell"],["Kettlebell Pistol Squat","Kettlebell_Pistol_Squat","quads","kettlebell"],["Kettlebell Seated Press","Kettlebell_Seated_Press","shoulders","kettlebell"],["Kettlebell Seesaw Press","Kettlebell_Seesaw_Press","shoulders","kettlebell"],["Kettlebell Sumo High Pull","Kettlebell_Sumo_High_Pull","back","kettlebell"],["Kettlebell Thruster","Kettlebell_Thruster","shoulders","kettlebell"],["Kettlebell Turkish Get-Up (Lunge style)","Kettlebell_Turkish_Get-Up_Lunge_style","shoulders","kettlebell"],["Kettlebell Turkish Get-Up (Squat style)","Kettlebell_Turkish_Get-Up_Squat_style","shoulders","kettlebell"],["Kettlebell Windmill","Kettlebell_Windmill","abs","kettlebell"],["Kipping Muscle Up","Kipping_Muscle_Up","back","other"],["Knee Across The Body","Knee_Across_The_Body","stretch",""],["Knee Circles","Knee_Circles","stretch","bodyweight"],["Knee/Hip Raise On Parallel Bars","Knee_Hip_Raise_On_Parallel_Bars","abs","other"],["Knee Tuck Jump","Knee_Tuck_Jump","hams","bodyweight"],["Kneeling Arm Drill","Kneeling_Arm_Drill","shoulders",""],["Kneeling Cable Crunch With Alternating Oblique Twists","Kneeling_Cable_Crunch_With_Alternating_Oblique_Twists","abs","cable"],["Kneeling Cable Triceps Extension","Kneeling_Cable_Triceps_Extension","triceps","cable"],["Kneeling Forearm Stretch","Kneeling_Forearm_Stretch","stretch",""],["Kneeling High Pulley Row","Kneeling_High_Pulley_Row","back","cable"],["Kneeling Hip Flexor","Kneeling_Hip_Flexor","stretch",""],["Kneeling Jump Squat","Kneeling_Jump_Squat","glutes","barbell"],["Kneeling Single-Arm High Pulley Row","Kneeling_Single-Arm_High_Pulley_Row","back","cable"],["Kneeling Squat","Kneeling_Squat","glutes","barbell"],["Landmine 180's","Landmine_180s","abs","barbell"],["Landmine Linear Jammer","Landmine_Linear_Jammer","shoulders","barbell"],["Lateral Bound","Lateral_Bound","hips","bodyweight"],["Lateral Box Jump","Lateral_Box_Jump","hips","other"],["Lateral Cone Hops","Lateral_Cone_Hops","hips","other"],["Lateral Raise - With Bands","Lateral_Raise_-_With_Bands","shoulders","bands"],["Latissimus Dorsi-SMR","Latissimus_Dorsi-SMR","stretch","foam roll"],["Leg-Over Floor Press","Leg-Over_Floor_Press","chest","kettlebell"],["Leg-Up Hamstring Stretch","Leg-Up_Hamstring_Stretch","stretch",""],["Leg Extensions","Leg_Extensions","quads","machine"],["Leg Lift","Leg_Lift","glutes","bodyweight"],["Leg Press","Leg_Press","quads","machine"],["Leg Pull-In","Leg_Pull-In","abs","bodyweight"],["Leverage Chest Press","Leverage_Chest_Press","chest","machine"],["Leverage Deadlift","Leverage_Deadlift","quads","machine"],["Leverage Decline Chest Press","Leverage_Decline_Chest_Press","chest","machine"],["Leverage High Row","Leverage_High_Row","back","machine"],["Leverage Incline Chest Press","Leverage_Incline_Chest_Press","chest","machine"],["Leverage Iso Row","Leverage_Iso_Row","back","machine"],["Leverage Shoulder Press","Leverage_Shoulder_Press","shoulders","machine"],["Leverage Shrug","Leverage_Shrug","back","machine"],["Linear 3-Part Start Technique","Linear_3-Part_Start_Technique","hams",""],["Linear Acceleration Wall Drill","Linear_Acceleration_Wall_Drill","hams",""],["Linear Depth Jump","Linear_Depth_Jump","quads","other"],["Log Lift","Log_Lift","shoulders","other"],["London Bridges","London_Bridges","back","other"],["Looking At Ceiling","Looking_At_Ceiling","stretch",""],["Low Cable Crossover","Low_Cable_Crossover","chest","cable"],["Low Cable Triceps Extension","Low_Cable_Triceps_Extension","triceps","cable"],["Low Pulley Row To Neck","Low_Pulley_Row_To_Neck","shoulders","cable"],["Lower Back-SMR","Lower_Back-SMR","stretch","foam roll"],["Lower Back Curl","Lower_Back_Curl","stretch","bodyweight"],["Lunge Pass Through","Lunge_Pass_Through","hams","kettlebell"],["Lunge Sprint","Lunge_Sprint","quads","machine"],["Lying Bent Leg Groin","Lying_Bent_Leg_Groin","stretch","other"],["Lying Cable Curl","Lying_Cable_Curl","biceps","cable"],["Lying Cambered Barbell Row","Lying_Cambered_Barbell_Row","back","barbell"],["Lying Close-Grip Bar Curl On High Pulley","Lying_Close-Grip_Bar_Curl_On_High_Pulley","biceps","cable"],["Lying Close-Grip Barbell Triceps Extension Behind The Head","Lying_Close-Grip_Barbell_Triceps_Extension_Behind_The_Head","triceps","barbell"],["Lying Close-Grip Barbell Triceps Press To Chin","Lying_Close-Grip_Barbell_Triceps_Press_To_Chin","triceps","ez-bar"],["Lying Crossover","Lying_Crossover","stretch","bodyweight"],["Lying Dumbbell Tricep Extension","Lying_Dumbbell_Tricep_Extension","triceps","dumbbell"],["Lying Face Down Plate Neck Resistance","Lying_Face_Down_Plate_Neck_Resistance","shoulders","other"],["Lying Face Up Plate Neck Resistance","Lying_Face_Up_Plate_Neck_Resistance","shoulders","other"],["Lying Glute","Lying_Glute","stretch","bodyweight"],["Lying Hamstring","Lying_Hamstring","stretch","other"],["Lying High Bench Barbell Curl","Lying_High_Bench_Barbell_Curl","biceps","barbell"],["Lying Leg Curls","Lying_Leg_Curls","hams","machine"],["Lying Machine Squat","Lying_Machine_Squat","quads","machine"],["Lying One-Arm Lateral Raise","Lying_One-Arm_Lateral_Raise","shoulders","dumbbell"],["Lying Prone Quadriceps","Lying_Prone_Quadriceps","stretch","bodyweight"],["Lying Rear Delt Raise","Lying_Rear_Delt_Raise","shoulders","dumbbell"],["Lying Supine Dumbbell Curl","Lying_Supine_Dumbbell_Curl","biceps","dumbbell"],["Lying T-Bar Row","Lying_T-Bar_Row","back","machine"],["Lying Triceps Press","Lying_Triceps_Press","triceps","ez-bar"],["Machine Bench Press","Machine_Bench_Press","chest","machine"],["Machine Bicep Curl","Machine_Bicep_Curl","biceps","machine"],["Machine Preacher Curls","Machine_Preacher_Curls","biceps","machine"],["Machine Shoulder (Military) Press","Machine_Shoulder_Military_Press","shoulders","machine"],["Machine Triceps Extension","Machine_Triceps_Extension","triceps","machine"],["Medicine Ball Chest Pass","Medicine_Ball_Chest_Pass","chest","med ball"],["Medicine Ball Full Twist","Medicine_Ball_Full_Twist","abs","med ball"],["Medicine Ball Scoop Throw","Medicine_Ball_Scoop_Throw","shoulders","med ball"],["Middle Back Shrug","Middle_Back_Shrug","back","dumbbell"],["Middle Back Stretch","Middle_Back_Stretch","stretch",""],["Mixed Grip Chin","Mixed_Grip_Chin","back","other"],["Monster Walk","Monster_Walk","hips","bands"],["Mountain Climbers","Mountain_Climbers","quads",""],["Moving Claw Series","Moving_Claw_Series","hams",""],["Muscle Snatch","Muscle_Snatch","hams","barbell"],["Muscle Up","Muscle_Up","back","other"],["Narrow Stance Hack Squats","Narrow_Stance_Hack_Squats","quads","machine"],["Narrow Stance Leg Press","Narrow_Stance_Leg_Press","quads","machine"],["Narrow Stance Squats","Narrow_Stance_Squats","quads","barbell"],["Natural Glute Ham Raise","Natural_Glute_Ham_Raise","hams","bodyweight"],["Neck-SMR","Neck-SMR","stretch","other"],["Neck Press","Neck_Press","chest","barbell"],["Oblique Crunches","Oblique_Crunches","abs","bodyweight"],["Oblique Crunches - On The Floor","Oblique_Crunches_-_On_The_Floor","abs","bodyweight"],["Olympic Squat","Olympic_Squat","quads","barbell"],["On-Your-Back Quad Stretch","On-Your-Back_Quad_Stretch","stretch","other"],["On Your Side Quad Stretch","On_Your_Side_Quad_Stretch","stretch",""],["One-Arm Dumbbell Row","One-Arm_Dumbbell_Row","back","dumbbell"],["One-Arm Flat Bench Dumbbell Flye","One-Arm_Flat_Bench_Dumbbell_Flye","chest","dumbbell"],["One-Arm High-Pulley Cable Side Bends","One-Arm_High-Pulley_Cable_Side_Bends","abs","cable"],["One-Arm Incline Lateral Raise","One-Arm_Incline_Lateral_Raise","shoulders","dumbbell"],["One-Arm Kettlebell Clean","One-Arm_Kettlebell_Clean","hams","kettlebell"],["One-Arm Kettlebell Clean and Jerk","One-Arm_Kettlebell_Clean_and_Jerk","shoulders","kettlebell"],["One-Arm Kettlebell Floor Press","One-Arm_Kettlebell_Floor_Press","chest","kettlebell"],["One-Arm Kettlebell Jerk","One-Arm_Kettlebell_Jerk","shoulders","kettlebell"],["One-Arm Kettlebell Military Press To The Side","One-Arm_Kettlebell_Military_Press_To_The_Side","shoulders","kettlebell"],["One-Arm Kettlebell Para Press","One-Arm_Kettlebell_Para_Press","shoulders","kettlebell"],["One-Arm Kettlebell Push Press","One-Arm_Kettlebell_Push_Press","shoulders","kettlebell"],["One-Arm Kettlebell Row","One-Arm_Kettlebell_Row","back","kettlebell"],["One-Arm Kettlebell Snatch","One-Arm_Kettlebell_Snatch","shoulders","kettlebell"],["One-Arm Kettlebell Split Jerk","One-Arm_Kettlebell_Split_Jerk","shoulders","kettlebell"],["One-Arm Kettlebell Split Snatch","One-Arm_Kettlebell_Split_Snatch","shoulders","kettlebell"],["One-Arm Kettlebell Swings","One-Arm_Kettlebell_Swings","hams","kettlebell"],["One-Arm Long Bar Row","One-Arm_Long_Bar_Row","back","barbell"],["One-Arm Medicine Ball Slam","One-Arm_Medicine_Ball_Slam","abs","med ball"],["One-Arm Open Palm Kettlebell Clean","One-Arm_Open_Palm_Kettlebell_Clean","hams","kettlebell"],["One-Arm Overhead Kettlebell Squats","One-Arm_Overhead_Kettlebell_Squats","quads","kettlebell"],["One-Arm Side Deadlift","One-Arm_Side_Deadlift","quads","barbell"],["One-Arm Side Laterals","One-Arm_Side_Laterals","shoulders","dumbbell"],["One-Legged Cable Kickback","One-Legged_Cable_Kickback","glutes","cable"],["One Arm Against Wall","One_Arm_Against_Wall","stretch",""],["One Arm Chin-Up","One_Arm_Chin-Up","back","other"],["One Arm Dumbbell Bench Press","One_Arm_Dumbbell_Bench_Press","chest","dumbbell"],["One Arm Dumbbell Preacher Curl","One_Arm_Dumbbell_Preacher_Curl","biceps","dumbbell"],["One Arm Floor Press","One_Arm_Floor_Press","triceps","barbell"],["One Arm Lat Pulldown","One_Arm_Lat_Pulldown","back","cable"],["One Arm Pronated Dumbbell Triceps Extension","One_Arm_Pronated_Dumbbell_Triceps_Extension","triceps","dumbbell"],["One Arm Supinated Dumbbell Triceps Extension","One_Arm_Supinated_Dumbbell_Triceps_Extension","triceps","dumbbell"],["One Half Locust","One_Half_Locust","stretch",""],["One Handed Hang","One_Handed_Hang","stretch","other"],["One Knee To Chest","One_Knee_To_Chest","stretch",""],["One Leg Barbell Squat","One_Leg_Barbell_Squat","quads","barbell"],["Open Palm Kettlebell Clean","Open_Palm_Kettlebell_Clean","hams","kettlebell"],["Otis-Up","Otis-Up","abs","other"],["Overhead Cable Curl","Overhead_Cable_Curl","biceps","cable"],["Overhead Lat","Overhead_Lat","stretch","other"],["Overhead Slam","Overhead_Slam","back","med ball"],["Overhead Squat","Overhead_Squat","quads","barbell"],["Overhead Stretch","Overhead_Stretch","stretch",""],["Overhead Triceps","Overhead_Triceps","stretch","bodyweight"],["Pallof Press","Pallof_Press","abs","cable"],["Pallof Press With Rotation","Pallof_Press_With_Rotation","abs","cable"],["Palms-Down Dumbbell Wrist Curl Over A Bench","Palms-Down_Dumbbell_Wrist_Curl_Over_A_Bench","forearms","dumbbell"],["Palms-Down Wrist Curl Over A Bench","Palms-Down_Wrist_Curl_Over_A_Bench","forearms","barbell"],["Palms-Up Barbell Wrist Curl Over A Bench","Palms-Up_Barbell_Wrist_Curl_Over_A_Bench","forearms","barbell"],["Palms-Up Dumbbell Wrist Curl Over A Bench","Palms-Up_Dumbbell_Wrist_Curl_Over_A_Bench","forearms","dumbbell"],["Parallel Bar Dip","Parallel_Bar_Dip","triceps","other"],["Pelvic Tilt Into Bridge","Pelvic_Tilt_Into_Bridge","stretch",""],["Peroneals-SMR","Peroneals-SMR","stretch","foam roll"],["Peroneals Stretch","Peroneals_Stretch","stretch","other"],["Physioball Hip Bridge","Physioball_Hip_Bridge","glutes","ball"],["Pin Presses","Pin_Presses","triceps","barbell"],["Piriformis-SMR","Piriformis-SMR","stretch","foam roll"],["Plank","Plank","abs","bodyweight"],["Plate Pinch","Plate_Pinch","forearms","other"],["Plate Twist","Plate_Twist","abs","other"],["Platform Hamstring Slides","Platform_Hamstring_Slides","hams","other"],["Plie Dumbbell Squat","Plie_Dumbbell_Squat","quads","dumbbell"],["Plyo Kettlebell Pushups","Plyo_Kettlebell_Pushups","chest","kettlebell"],["Plyo Push-up","Plyo_Push-up","chest","bodyweight"],["Posterior Tibialis Stretch","Posterior_Tibialis_Stretch","stretch","other"],["Power Clean","Power_Clean","hams","barbell"],["Power Clean from Blocks","Power_Clean_from_Blocks","hams","barbell"],["Power Jerk","Power_Jerk","quads","barbell"],["Power Partials","Power_Partials","shoulders","dumbbell"],["Power Snatch","Power_Snatch","hams","barbell"],["Power Snatch from Blocks","Power_Snatch_from_Blocks","quads","barbell"],["Power Stairs","Power_Stairs","hams","other"],["Preacher Curl","Preacher_Curl","biceps","barbell"],["Preacher Hammer Dumbbell Curl","Preacher_Hammer_Dumbbell_Curl","biceps","dumbbell"],["Press Sit-Up","Press_Sit-Up","abs","barbell"],["Prone Manual Hamstring","Prone_Manual_Hamstring","hams",""],["Prowler Sprint","Prowler_Sprint","cardio","other"],["Pull Through","Pull_Through","glutes","cable"],["Pullups","Pullups","back","bodyweight"],["Push-Up Wide","Push-Up_Wide","chest","bodyweight"],["Push-Ups - Close Triceps Position","Push-Ups_-_Close_Triceps_Position","triceps","bodyweight"],["Push-Ups With Feet Elevated","Push-Ups_With_Feet_Elevated","chest","bodyweight"],["Push-Ups With Feet On An Exercise Ball","Push-Ups_With_Feet_On_An_Exercise_Ball","chest","ball"],["Push Press","Push_Press","shoulders","barbell"],["Push Press - Behind the Neck","Push_Press_-_Behind_the_Neck","shoulders","barbell"],["Push Up to Side Plank","Push_Up_to_Side_Plank","chest","bodyweight"],["Pushups","Pushups","chest","bodyweight"],["Pushups (Close and Wide Hand Positions)","Pushups_Close_and_Wide_Hand_Positions","chest","bodyweight"],["Pyramid","Pyramid","stretch","ball"],["Quad Stretch","Quad_Stretch","stretch","other"],["Quadriceps-SMR","Quadriceps-SMR","stretch","foam roll"],["Quick Leap","Quick_Leap","quads","other"],["Rack Delivery","Rack_Delivery","shoulders","barbell"],["Rack Pull with Bands","Rack_Pull_with_Bands","back","barbell"],["Rack Pulls","Rack_Pulls","back","barbell"],["Rear Leg Raises","Rear_Leg_Raises","stretch","bodyweight"],["Recumbent Bike","Recumbent_Bike","cardio","machine"],["Return Push from Stance","Return_Push_from_Stance","shoulders","med ball"],["Reverse Band Bench Press","Reverse_Band_Bench_Press","triceps","barbell"],["Reverse Band Box Squat","Reverse_Band_Box_Squat","quads","barbell"],["Reverse Band Deadlift","Reverse_Band_Deadlift","back","barbell"],["Reverse Band Power Squat","Reverse_Band_Power_Squat","quads","barbell"],["Reverse Band Sumo Deadlift","Reverse_Band_Sumo_Deadlift","hams","barbell"],["Reverse Barbell Curl","Reverse_Barbell_Curl","biceps","barbell"],["Reverse Barbell Preacher Curls","Reverse_Barbell_Preacher_Curls","biceps","ez-bar"],["Reverse Cable Curl","Reverse_Cable_Curl","biceps","cable"],["Reverse Crunch","Reverse_Crunch","abs","bodyweight"],["Reverse Flyes","Reverse_Flyes","shoulders","dumbbell"],["Reverse Flyes With External Rotation","Reverse_Flyes_With_External_Rotation","shoulders","dumbbell"],["Reverse Grip Bent-Over Rows","Reverse_Grip_Bent-Over_Rows","back","barbell"],["Reverse Grip Triceps Pushdown","Reverse_Grip_Triceps_Pushdown","triceps","cable"],["Reverse Hyperextension","Reverse_Hyperextension","hams","machine"],["Reverse Machine Flyes","Reverse_Machine_Flyes","shoulders","machine"],["Reverse Plate Curls","Reverse_Plate_Curls","biceps","other"],["Reverse Triceps Bench Press","Reverse_Triceps_Bench_Press","triceps","barbell"],["Rhomboids-SMR","Rhomboids-SMR","stretch","foam roll"],["Rickshaw Carry","Rickshaw_Carry","forearms","other"],["Rickshaw Deadlift","Rickshaw_Deadlift","quads","other"],["Ring Dips","Ring_Dips","triceps","other"],["Rocket Jump","Rocket_Jump","quads","bodyweight"],["Rocking Standing Calf Raise","Rocking_Standing_Calf_Raise","calves","barbell"],["Rocky Pull-Ups/Pulldowns","Rocky_Pull-Ups_Pulldowns","back","other"],["Romanian Deadlift","Romanian_Deadlift","hams","barbell"],["Romanian Deadlift from Deficit","Romanian_Deadlift_from_Deficit","hams","barbell"],["Rope Climb","Rope_Climb","back","other"],["Rope Crunch","Rope_Crunch","abs","cable"],["Rope Jumping","Rope_Jumping","cardio","other"],["Rope Straight-Arm Pulldown","Rope_Straight-Arm_Pulldown","back","cable"],["Round The World Shoulder Stretch","Round_The_World_Shoulder_Stretch","stretch","other"],["Rowing, Stationary","Rowing_Stationary","cardio","machine"],["Runner's Stretch","Runners_Stretch","stretch",""],["Running, Treadmill","Running_Treadmill","cardio","machine"],["Russian Twist","Russian_Twist","abs","bodyweight"],["Sandbag Load","Sandbag_Load","quads","other"],["Scapular Pull-Up","Scapular_Pull-Up","back",""],["Scissor Kick","Scissor_Kick","stretch","bodyweight"],["Scissors Jump","Scissors_Jump","quads","bodyweight"],["Seated Band Hamstring Curl","Seated_Band_Hamstring_Curl","hams","other"],["Seated Barbell Military Press","Seated_Barbell_Military_Press","shoulders","barbell"],["Seated Barbell Twist","Seated_Barbell_Twist","abs","barbell"],["Seated Bent-Over One-Arm Dumbbell Triceps Extension","Seated_Bent-Over_One-Arm_Dumbbell_Triceps_Extension","triceps","dumbbell"],["Seated Bent-Over Rear Delt Raise","Seated_Bent-Over_Rear_Delt_Raise","shoulders","dumbbell"],["Seated Bent-Over Two-Arm Dumbbell Triceps Extension","Seated_Bent-Over_Two-Arm_Dumbbell_Triceps_Extension","triceps","dumbbell"],["Seated Biceps","Seated_Biceps","stretch","bodyweight"],["Seated Cable Rows","Seated_Cable_Rows","back","cable"],["Seated Cable Shoulder Press","Seated_Cable_Shoulder_Press","shoulders","cable"],["Seated Calf Raise","Seated_Calf_Raise","calves","machine"],["Seated Calf Stretch","Seated_Calf_Stretch","stretch",""],["Seated Close-Grip Concentration Barbell Curl","Seated_Close-Grip_Concentration_Barbell_Curl","biceps","barbell"],["Seated Dumbbell Curl","Seated_Dumbbell_Curl","biceps","dumbbell"],["Seated Dumbbell Inner Biceps Curl","Seated_Dumbbell_Inner_Biceps_Curl","biceps","dumbbell"],["Seated Dumbbell Palms-Down Wrist Curl","Seated_Dumbbell_Palms-Down_Wrist_Curl","forearms","dumbbell"],["Seated Dumbbell Palms-Up Wrist Curl","Seated_Dumbbell_Palms-Up_Wrist_Curl","forearms","dumbbell"],["Seated Dumbbell Press","Seated_Dumbbell_Press","shoulders","dumbbell"],["Seated Flat Bench Leg Pull-In","Seated_Flat_Bench_Leg_Pull-In","abs","bodyweight"],["Seated Floor Hamstring Stretch","Seated_Floor_Hamstring_Stretch","stretch",""],["Seated Front Deltoid","Seated_Front_Deltoid","stretch","bodyweight"],["Seated Glute","Seated_Glute","stretch","bodyweight"],["Seated Good Mornings","Seated_Good_Mornings","back","barbell"],["Seated Hamstring","Seated_Hamstring","stretch",""],["Seated Hamstring and Calf Stretch","Seated_Hamstring_and_Calf_Stretch","stretch","other"],["Seated Head Harness Neck Resistance","Seated_Head_Harness_Neck_Resistance","shoulders","other"],["Seated Leg Curl","Seated_Leg_Curl","hams","machine"],["Seated Leg Tucks","Seated_Leg_Tucks","abs","bodyweight"],["Seated One-Arm Dumbbell Palms-Down Wrist Curl","Seated_One-Arm_Dumbbell_Palms-Down_Wrist_Curl","forearms","dumbbell"],["Seated One-Arm Dumbbell Palms-Up Wrist Curl","Seated_One-Arm_Dumbbell_Palms-Up_Wrist_Curl","forearms","dumbbell"],["Seated One-arm Cable Pulley Rows","Seated_One-arm_Cable_Pulley_Rows","back","cable"],["Seated Overhead Stretch","Seated_Overhead_Stretch","stretch",""],["Seated Palm-Up Barbell Wrist Curl","Seated_Palm-Up_Barbell_Wrist_Curl","forearms","barbell"],["Seated Palms-Down Barbell Wrist Curl","Seated_Palms-Down_Barbell_Wrist_Curl","forearms","barbell"],["Seated Side Lateral Raise","Seated_Side_Lateral_Raise","shoulders","dumbbell"],["Seated Triceps Press","Seated_Triceps_Press","triceps","dumbbell"],["Seated Two-Arm Palms-Up Low-Pulley Wrist Curl","Seated_Two-Arm_Palms-Up_Low-Pulley_Wrist_Curl","forearms","cable"],["See-Saw Press (Alternating Side Press)","See-Saw_Press_Alternating_Side_Press","shoulders","dumbbell"],["Shotgun Row","Shotgun_Row","back","cable"],["Shoulder Circles","Shoulder_Circles","stretch",""],["Shoulder Press - With Bands","Shoulder_Press_-_With_Bands","shoulders","bands"],["Shoulder Raise","Shoulder_Raise","stretch",""],["Shoulder Stretch","Shoulder_Stretch","stretch",""],["Side-Lying Floor Stretch","Side-Lying_Floor_Stretch","stretch",""],["Side Bridge","Side_Bridge","abs","bodyweight"],["Side Hop-Sprint","Side_Hop-Sprint","quads","other"],["Side Jackknife","Side_Jackknife","abs","bodyweight"],["Side Lateral Raise","Side_Lateral_Raise","shoulders","dumbbell"],["Side Laterals to Front Raise","Side_Laterals_to_Front_Raise","shoulders","dumbbell"],["Side Leg Raises","Side_Leg_Raises","stretch","bodyweight"],["Side Lying Groin Stretch","Side_Lying_Groin_Stretch","stretch",""],["Side Neck Stretch","Side_Neck_Stretch","stretch",""],["Side Standing Long Jump","Side_Standing_Long_Jump","quads",""],["Side To Side Chins","Side_To_Side_Chins","back","other"],["Side Wrist Pull","Side_Wrist_Pull","stretch",""],["Side to Side Box Shuffle","Side_to_Side_Box_Shuffle","quads","other"],["Single-Arm Cable Crossover","Single-Arm_Cable_Crossover","chest","cable"],["Single-Arm Linear Jammer","Single-Arm_Linear_Jammer","shoulders","barbell"],["Single-Arm Push-Up","Single-Arm_Push-Up","chest","bodyweight"],["Single-Cone Sprint Drill","Single-Cone_Sprint_Drill","quads","other"],["Single-Leg High Box Squat","Single-Leg_High_Box_Squat","quads","other"],["Single-Leg Hop Progression","Single-Leg_Hop_Progression","quads","other"],["Single-Leg Lateral Hop","Single-Leg_Lateral_Hop","quads","other"],["Single-Leg Leg Extension","Single-Leg_Leg_Extension","quads","machine"],["Single-Leg Stride Jump","Single-Leg_Stride_Jump","quads","other"],["Single Dumbbell Raise","Single_Dumbbell_Raise","shoulders","dumbbell"],["Single Leg Butt Kick","Single_Leg_Butt_Kick","quads","bodyweight"],["Single Leg Glute Bridge","Single_Leg_Glute_Bridge","glutes","bodyweight"],["Single Leg Push-off","Single_Leg_Push-off","quads","other"],["Sit-Up","Sit-Up","abs","bodyweight"],["Sit Squats","Sit_Squats","stretch",""],["Skating","Skating","cardio","other"],["Sled Drag - Harness","Sled_Drag_-_Harness","quads","other"],["Sled Overhead Backward Walk","Sled_Overhead_Backward_Walk","shoulders","other"],["Sled Overhead Triceps Extension","Sled_Overhead_Triceps_Extension","triceps","other"],["Sled Push","Sled_Push","quads","other"],["Sled Reverse Flye","Sled_Reverse_Flye","shoulders","other"],["Sled Row","Sled_Row","back","other"],["Sledgehammer Swings","Sledgehammer_Swings","abs","other"],["Smith Incline Shoulder Raise","Smith_Incline_Shoulder_Raise","shoulders","barbell"],["Smith Machine Behind the Back Shrug","Smith_Machine_Behind_the_Back_Shrug","back","machine"],["Smith Machine Bench Press","Smith_Machine_Bench_Press","chest","machine"],["Smith Machine Bent Over Row","Smith_Machine_Bent_Over_Row","back","machine"],["Smith Machine Calf Raise","Smith_Machine_Calf_Raise","calves","machine"],["Smith Machine Close-Grip Bench Press","Smith_Machine_Close-Grip_Bench_Press","triceps","machine"],["Smith Machine Decline Press","Smith_Machine_Decline_Press","chest","machine"],["Smith Machine Hang Power Clean","Smith_Machine_Hang_Power_Clean","hams","machine"],["Smith Machine Hip Raise","Smith_Machine_Hip_Raise","abs","machine"],["Smith Machine Incline Bench Press","Smith_Machine_Incline_Bench_Press","chest","machine"],["Smith Machine Leg Press","Smith_Machine_Leg_Press","quads","machine"],["Smith Machine One-Arm Upright Row","Smith_Machine_One-Arm_Upright_Row","shoulders","machine"],["Smith Machine Overhead Shoulder Press","Smith_Machine_Overhead_Shoulder_Press","shoulders","machine"],["Smith Machine Pistol Squat","Smith_Machine_Pistol_Squat","quads","machine"],["Smith Machine Reverse Calf Raises","Smith_Machine_Reverse_Calf_Raises","calves","machine"],["Smith Machine Squat","Smith_Machine_Squat","quads","machine"],["Smith Machine Stiff-Legged Deadlift","Smith_Machine_Stiff-Legged_Deadlift","hams","machine"],["Smith Machine Upright Row","Smith_Machine_Upright_Row","back","machine"],["Smith Single-Leg Split Squat","Smith_Single-Leg_Split_Squat","quads","machine"],["Snatch","Snatch","quads","barbell"],["Snatch Balance","Snatch_Balance","quads","barbell"],["Snatch Deadlift","Snatch_Deadlift","hams","barbell"],["Snatch Pull","Snatch_Pull","hams","barbell"],["Snatch Shrug","Snatch_Shrug","back","barbell"],["Snatch from Blocks","Snatch_from_Blocks","quads","barbell"],["Speed Band Overhead Triceps","Speed_Band_Overhead_Triceps","triceps","bands"],["Speed Box Squat","Speed_Box_Squat","quads","barbell"],["Speed Squats","Speed_Squats","quads","barbell"],["Spell Caster","Spell_Caster","abs","dumbbell"],["Spider Crawl","Spider_Crawl","abs","bodyweight"],["Spider Curl","Spider_Curl","biceps","ez-bar"],["Spinal Stretch","Spinal_Stretch","stretch",""],["Split Clean","Split_Clean","quads","barbell"],["Split Jerk","Split_Jerk","quads","barbell"],["Split Jump","Split_Jump","quads","bodyweight"],["Split Snatch","Split_Snatch","hams","barbell"],["Split Squat with Dumbbells","Split_Squat_with_Dumbbells","quads","dumbbell"],["Split Squats","Split_Squats","stretch",""],["Squat Jerk","Squat_Jerk","quads","barbell"],["Squat with Bands","Squat_with_Bands","quads","barbell"],["Squat with Chains","Squat_with_Chains","quads","barbell"],["Squat with Plate Movers","Squat_with_Plate_Movers","quads","barbell"],["Squats - With Bands","Squats_-_With_Bands","quads","bands"],["Stairmaster","Stairmaster","cardio","machine"],["Standing Alternating Dumbbell Press","Standing_Alternating_Dumbbell_Press","shoulders","dumbbell"],["Standing Barbell Calf Raise","Standing_Barbell_Calf_Raise","calves","barbell"],["Standing Barbell Press Behind Neck","Standing_Barbell_Press_Behind_Neck","shoulders","barbell"],["Standing Bent-Over One-Arm Dumbbell Triceps Extension","Standing_Bent-Over_One-Arm_Dumbbell_Triceps_Extension","triceps","dumbbell"],["Standing Bent-Over Two-Arm Dumbbell Triceps Extension","Standing_Bent-Over_Two-Arm_Dumbbell_Triceps_Extension","triceps","dumbbell"],["Standing Biceps Cable Curl","Standing_Biceps_Cable_Curl","biceps","cable"],["Standing Biceps Stretch","Standing_Biceps_Stretch","stretch","other"],["Standing Bradford Press","Standing_Bradford_Press","shoulders","barbell"],["Standing Cable Chest Press","Standing_Cable_Chest_Press","chest","cable"],["Standing Cable Lift","Standing_Cable_Lift","abs","cable"],["Standing Cable Wood Chop","Standing_Cable_Wood_Chop","abs","cable"],["Standing Calf Raises","Standing_Calf_Raises","calves","machine"],["Standing Concentration Curl","Standing_Concentration_Curl","biceps","dumbbell"],["Standing Dumbbell Calf Raise","Standing_Dumbbell_Calf_Raise","calves","dumbbell"],["Standing Dumbbell Press","Standing_Dumbbell_Press","shoulders","dumbbell"],["Standing Dumbbell Reverse Curl","Standing_Dumbbell_Reverse_Curl","biceps","dumbbell"],["Standing Dumbbell Straight-Arm Front Delt Raise Above Head","Standing_Dumbbell_Straight-Arm_Front_Delt_Raise_Above_Head","shoulders","dumbbell"],["Standing Dumbbell Triceps Extension","Standing_Dumbbell_Triceps_Extension","triceps","dumbbell"],["Standing Dumbbell Upright Row","Standing_Dumbbell_Upright_Row","back","dumbbell"],["Standing Elevated Quad Stretch","Standing_Elevated_Quad_Stretch","stretch","other"],["Standing Front Barbell Raise Over Head","Standing_Front_Barbell_Raise_Over_Head","shoulders","barbell"],["Standing Gastrocnemius Calf Stretch","Standing_Gastrocnemius_Calf_Stretch","stretch",""],["Standing Hamstring and Calf Stretch","Standing_Hamstring_and_Calf_Stretch","stretch","other"],["Standing Hip Circles","Standing_Hip_Circles","stretch","bodyweight"],["Standing Hip Flexors","Standing_Hip_Flexors","stretch",""],["Standing Inner-Biceps Curl","Standing_Inner-Biceps_Curl","biceps","dumbbell"],["Standing Lateral Stretch","Standing_Lateral_Stretch","stretch",""],["Standing Leg Curl","Standing_Leg_Curl","hams","machine"],["Standing Long Jump","Standing_Long_Jump","quads","bodyweight"],["Standing Low-Pulley Deltoid Raise","Standing_Low-Pulley_Deltoid_Raise","shoulders","cable"],["Standing Low-Pulley One-Arm Triceps Extension","Standing_Low-Pulley_One-Arm_Triceps_Extension","triceps","cable"],["Standing Military Press","Standing_Military_Press","shoulders","barbell"],["Standing Olympic Plate Hand Squeeze","Standing_Olympic_Plate_Hand_Squeeze","forearms","other"],["Standing One-Arm Cable Curl","Standing_One-Arm_Cable_Curl","biceps","cable"],["Standing One-Arm Dumbbell Curl Over Incline Bench","Standing_One-Arm_Dumbbell_Curl_Over_Incline_Bench","biceps","dumbbell"],["Standing One-Arm Dumbbell Triceps Extension","Standing_One-Arm_Dumbbell_Triceps_Extension","triceps","dumbbell"],["Standing Overhead Barbell Triceps Extension","Standing_Overhead_Barbell_Triceps_Extension","triceps","barbell"],["Standing Palm-In One-Arm Dumbbell Press","Standing_Palm-In_One-Arm_Dumbbell_Press","shoulders","dumbbell"],["Standing Palms-In Dumbbell Press","Standing_Palms-In_Dumbbell_Press","shoulders","dumbbell"],["Standing Palms-Up Barbell Behind The Back Wrist Curl","Standing_Palms-Up_Barbell_Behind_The_Back_Wrist_Curl","forearms","barbell"],["Standing Pelvic Tilt","Standing_Pelvic_Tilt","stretch",""],["Standing Rope Crunch","Standing_Rope_Crunch","abs","cable"],["Standing Soleus And Achilles Stretch","Standing_Soleus_And_Achilles_Stretch","stretch",""],["Standing Toe Touches","Standing_Toe_Touches","stretch",""],["Standing Towel Triceps Extension","Standing_Towel_Triceps_Extension","triceps","bodyweight"],["Standing Two-Arm Overhead Throw","Standing_Two-Arm_Overhead_Throw","shoulders","med ball"],["Star Jump","Star_Jump","quads","bodyweight"],["Step-up with Knee Raise","Step-up_with_Knee_Raise","glutes","bodyweight"],["Step Mill","Step_Mill","cardio","machine"],["Stiff-Legged Barbell Deadlift","Stiff-Legged_Barbell_Deadlift","hams","barbell"],["Stiff-Legged Dumbbell Deadlift","Stiff-Legged_Dumbbell_Deadlift","hams","dumbbell"],["Stiff Leg Barbell Good Morning","Stiff_Leg_Barbell_Good_Morning","back","barbell"],["Stomach Vacuum","Stomach_Vacuum","stretch","bodyweight"],["Straight-Arm Dumbbell Pullover","Straight-Arm_Dumbbell_Pullover","chest","dumbbell"],["Straight-Arm Pulldown","Straight-Arm_Pulldown","back","cable"],["Straight Bar Bench Mid Rows","Straight_Bar_Bench_Mid_Rows","back","barbell"],["Straight Raises on Incline Bench","Straight_Raises_on_Incline_Bench","shoulders","barbell"],["Stride Jump Crossover","Stride_Jump_Crossover","quads","other"],["Sumo Deadlift","Sumo_Deadlift","hams","barbell"],["Sumo Deadlift with Bands","Sumo_Deadlift_with_Bands","hams","barbell"],["Sumo Deadlift with Chains","Sumo_Deadlift_with_Chains","hams","barbell"],["Superman","Superman","stretch","bodyweight"],["Supine Chest Throw","Supine_Chest_Throw","triceps","med ball"],["Supine One-Arm Overhead Throw","Supine_One-Arm_Overhead_Throw","abs","med ball"],["Supine Two-Arm Overhead Throw","Supine_Two-Arm_Overhead_Throw","abs","med ball"],["Suspended Fallout","Suspended_Fallout","abs","other"],["Suspended Push-Up","Suspended_Push-Up","chest","other"],["Suspended Reverse Crunch","Suspended_Reverse_Crunch","abs","other"],["Suspended Row","Suspended_Row","back","other"],["Suspended Split Squat","Suspended_Split_Squat","quads","other"],["Svend Press","Svend_Press","chest","other"],["T-Bar Row with Handle","T-Bar_Row_with_Handle","back","barbell"],["Tate Press","Tate_Press","triceps","dumbbell"],["The Straddle","The_Straddle","stretch",""],["Thigh Abductor","Thigh_Abductor","hips","machine"],["Thigh Adductor","Thigh_Adductor","hips","machine"],["Tire Flip","Tire_Flip","quads","other"],["Toe Touchers","Toe_Touchers","stretch","bodyweight"],["Torso Rotation","Torso_Rotation","stretch","ball"],["Trail Running/Walking","Trail_Running_Walking","cardio",""],["Trap Bar Deadlift","Trap_Bar_Deadlift","quads","other"],["Tricep Dumbbell Kickback","Tricep_Dumbbell_Kickback","triceps","dumbbell"],["Tricep Side Stretch","Tricep_Side_Stretch","stretch",""],["Triceps Overhead Extension with Rope","Triceps_Overhead_Extension_with_Rope","triceps","cable"],["Triceps Pushdown","Triceps_Pushdown","triceps","cable"],["Triceps Pushdown - Rope Attachment","Triceps_Pushdown_-_Rope_Attachment","triceps","cable"],["Triceps Pushdown - V-Bar Attachment","Triceps_Pushdown_-_V-Bar_Attachment","triceps","cable"],["Triceps Stretch","Triceps_Stretch","stretch",""],["Tuck Crunch","Tuck_Crunch","abs","bodyweight"],["Two-Arm Dumbbell Preacher Curl","Two-Arm_Dumbbell_Preacher_Curl","biceps","dumbbell"],["Two-Arm Kettlebell Clean","Two-Arm_Kettlebell_Clean","shoulders","kettlebell"],["Two-Arm Kettlebell Jerk","Two-Arm_Kettlebell_Jerk","shoulders","kettlebell"],["Two-Arm Kettlebell Military Press","Two-Arm_Kettlebell_Military_Press","shoulders","kettlebell"],["Two-Arm Kettlebell Row","Two-Arm_Kettlebell_Row","back","kettlebell"],["Underhand Cable Pulldowns","Underhand_Cable_Pulldowns","back","cable"],["Upper Back-Leg Grab","Upper_Back-Leg_Grab","stretch",""],["Upper Back Stretch","Upper_Back_Stretch","stretch",""],["Upright Barbell Row","Upright_Barbell_Row","shoulders","barbell"],["Upright Cable Row","Upright_Cable_Row","back","cable"],["Upright Row - With Bands","Upright_Row_-_With_Bands","back","bands"],["Upward Stretch","Upward_Stretch","stretch",""],["V-Bar Pulldown","V-Bar_Pulldown","back","cable"],["V-Bar Pullup","V-Bar_Pullup","back","bodyweight"],["Vertical Swing","Vertical_Swing","hams","dumbbell"],["Walking, Treadmill","Walking_Treadmill","cardio","machine"],["Weighted Ball Hyperextension","Weighted_Ball_Hyperextension","back","ball"],["Weighted Ball Side Bend","Weighted_Ball_Side_Bend","abs","ball"],["Weighted Bench Dip","Weighted_Bench_Dip","triceps","other"],["Weighted Crunches","Weighted_Crunches","abs","med ball"],["Weighted Jump Squat","Weighted_Jump_Squat","quads","barbell"],["Weighted Pull Ups","Weighted_Pull_Ups","back","other"],["Weighted Sissy Squat","Weighted_Sissy_Squat","quads","barbell"],["Weighted Sit-Ups - With Bands","Weighted_Sit-Ups_-_With_Bands","abs","other"],["Weighted Squat","Weighted_Squat","quads","other"],["Wide-Grip Barbell Bench Press","Wide-Grip_Barbell_Bench_Press","chest","barbell"],["Wide-Grip Decline Barbell Bench Press","Wide-Grip_Decline_Barbell_Bench_Press","chest","barbell"],["Wide-Grip Decline Barbell Pullover","Wide-Grip_Decline_Barbell_Pullover","chest","barbell"],["Wide-Grip Lat Pulldown","Wide-Grip_Lat_Pulldown","back","cable"],["Wide-Grip Pulldown Behind The Neck","Wide-Grip_Pulldown_Behind_The_Neck","back","cable"],["Wide-Grip Rear Pull-Up","Wide-Grip_Rear_Pull-Up","back","bodyweight"],["Wide-Grip Standing Barbell Curl","Wide-Grip_Standing_Barbell_Curl","biceps","barbell"],["Wide Stance Barbell Squat","Wide_Stance_Barbell_Squat","quads","barbell"],["Wide Stance Stiff Legs","Wide_Stance_Stiff_Legs","hams","barbell"],["Wind Sprints","Wind_Sprints","abs","bodyweight"],["Windmills","Windmills","stretch",""],["World's Greatest Stretch","Worlds_Greatest_Stretch","stretch",""],["Wrist Circles","Wrist_Circles","stretch","bodyweight"],["Wrist Roller","Wrist_Roller","forearms","other"],["Wrist Rotations with Straight Bar","Wrist_Rotations_with_Straight_Bar","forearms","barbell"],["Yoke Walk","Yoke_Walk","quads","other"],["Zercher Squats","Zercher_Squats","quads","barbell"],["Zottman Curl","Zottman_Curl","biceps","dumbbell"],["Zottman Preacher Curl","Zottman_Preacher_Curl","biceps","dumbbell"]];
+const GROUPS = [
+  ["all","All"],["chest","Chest"],["back","Back"],["shoulders","Shoulders"],["biceps","Biceps"],
+  ["triceps","Triceps"],["forearms","Forearms"],["abs","Abs / Core"],["quads","Quads"],
+  ["hams","Hamstrings"],["glutes","Glutes"],["calves","Calves"],["hips","Hips"],
+  ["stretch","Stretching"],["cardio","Cardio"]
+];
+const COLORS = ["c1","c2","c3","c4","c5","c6"];
+const WEEKDAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+/* ================= STATE ================= */
+const KEY = 'ceefit_v2';
+let S = load();
+function load(){
+  try{ const raw = localStorage.getItem(KEY); if(raw) return JSON.parse(raw); }catch(e){}
+  return {splits:[], activeSplitId:null, checks:{}, lastDay:{}};
 }
-.exercise.done{opacity:0.45;}
-.ex-top{display:flex; align-items:flex-start; gap:12px;}
-.checkbox{
-  width:24px;height:24px;border-radius:7px;border:2px solid var(--line);
-  flex:0 0 24px; display:flex; align-items:center; justify-content:center;
-  font-size:14px; margin-top:2px; background:var(--panel-raised);
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function activeSplit(){ return S.splits.find(s=>s.id===S.activeSplitId) || null; }
+function cssColor(c){ return getComputedStyle(document.documentElement).getPropertyValue('--'+c).trim() || '#d4af6a'; }
+
+/* ================= V1 MIGRATION ================= */
+(function migrate(){
+  if(S.splits.length) return;
+  let v1; try{ v1 = JSON.parse(localStorage.getItem('ironlog_v1')||'null'); }catch(e){ v1=null; }
+  const P = [
+    ["Upper Push + Biceps","c1",1,"",[["Barbell Bench Press",4,"6-8",1],["Seated Dumbbell Shoulder Press",3,"8-10",1],["Incline Dumbbell Press",3,"10",1],["Cable Lateral Raise",3,"12-15",1],["Overhead Triceps Extension",3,"12",1],["Triceps Rope Pushdown",3,"12-15",1],["Barbell or EZ-Bar Curl",3,"10",1],["Incline Dumbbell Curl",3,"10-12",1],["Hammer Curl",2,"12",1]]],
+    ["Yoga","c4",2,"Gold's Gym — Yoga Class",[["Yoga Class",0,"",0],["Post-Class Stretch / Breathwork",0,"",0]]],
+    ["Legs + Back","c3",3,"",[["Back Squat",4,"6",1],["Romanian Deadlift",4,"10",1],["Leg Press",4,"12",1],["Walking Lunges",3,"12 steps/leg",1],["Leg Curl (Machine)",3,"12",1],["Standing Calf Raise",4,"15",1],["Barbell Bent-Over Row",4,"8",1],["Lat Pulldown",3,"10-12",1],["Seated Cable Row",3,"10-12",1]]],
+    ["Kickboxing + Yoga","c4",4,"Gold's Gym — Kickboxing → Yoga",[["Kickboxing Class",0,"",0],["Yoga Class",0,"",0]]],
+    ["Full Body Compound","c5",5,"Under 60 minutes",[["Barbell Bench Press",4,"5",1],["Back Squat",4,"5",1],["Deadlift",3,"5",1],["Standing Overhead Press",3,"6-8",1],["Clean & Jerk",5,"3",1],["Curl + Triceps Superset",3,"10/10",1],["Ab Finisher Circuit",3,"rounds",0]]]
+  ];
+  const dayKeys = ["mon","tue","wed","thu","fri"];
+  const split = { id:uid(), name:"My 5-Day Split", days:[] };
+  P.forEach((pd,di)=>{
+    const day = { id:uid(), name:pd[0], color:pd[1], weekday:pd[2], venue:pd[3], sections:[{id:uid(), name:"Workout", exercises:[]}] };
+    pd[4].forEach((pe,ei)=>{
+      const k = dayKeys[di]+"_"+ei;
+      day.sections[0].exercises.push({
+        iid:uid(), name:pe[0], dbId:null, sets:pe[1], reps:pe[2], useWeight:!!pe[3],
+        weight: (v1 && v1.weights && v1.weights[k]!==undefined && v1.weights[k]!=="") ? v1.weights[k] : "",
+        notes: (v1 && v1.notes && v1.notes[k]) ? v1.notes[k] : ""
+      });
+    });
+    split.days.push(day);
+  });
+  S.splits.push(split);
+  S.activeSplitId = split.id;
+  save();
+  if(v1) setTimeout(()=>toast("Imported your split & weights from v1 ✓"), 600);
+})();
+
+/* ================= NAV ================= */
+let screen = 'workout';
+let editCtx = null;   // {splitId, dayId}
+let pickCtx = null;   // {splitId, dayId, secId}
+function go(name){
+  screen = name;
+  document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+  document.getElementById('screen'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  renderTop();
+  if(name==='workout') renderWorkout();
+  if(name==='splits') renderSplits();
+  if(name==='dayEdit') renderDayEdit();
+  window.scrollTo(0,0);
 }
-.checkbox.checked{background:var(--gold); border-color:var(--gold); color:#0d0d0d;}
-.ex-name{font-size:15px; font-weight:600; line-height:1.3;}
-.ex-meta{font-size:12.5px; color:var(--ink-dim); margin-top:3px;}
-.ex-controls{
-  display:flex; align-items:center; gap:8px; margin-top:10px; padding-top:10px;
-  border-top:1px solid var(--line);
+function renderTop(){
+  const t = document.getElementById('topActions');
+  if(screen==='workout'){
+    t.innerHTML = '<button class="tbtn" onclick="go(\'splits\')">Splits</button>' +
+      (activeSplit() ? '<button class="tbtn" onclick="editCurrentDay()">Edit day</button>' : '');
+  } else if(screen==='dayEdit'){
+    t.innerHTML = '<button class="tbtn primary" onclick="go(\'workout\')">Done</button>';
+  } else if(screen==='wizard'){
+    t.innerHTML = '<button class="tbtn" onclick="go(\'splits\')">Cancel</button>';
+  } else {
+    t.innerHTML = '<button class="tbtn primary" onclick="go(\'workout\')">Today</button>';
+  }
 }
-.weight-field{
-  display:flex; align-items:center; background:var(--panel-raised); border-radius:9px;
-  border:1px solid var(--line); overflow:hidden;
+
+/* ================= WORKOUT SCREEN ================= */
+let currentDayId = null;
+function pickAutoDay(sp){
+  const wd = new Date().getDay();
+  const hit = sp.days.find(d=>d.weekday===wd);
+  if(hit) return hit.id;
+  const last = S.lastDay[sp.id];
+  if(last && sp.days.find(d=>d.id===last)) return last;
+  return sp.days[0] ? sp.days[0].id : null;
 }
-.weight-field button{
-  background:none;border:none;color:var(--ink-dim);font-size:17px;width:34px;height:34px;
-  display:flex;align-items:center;justify-content:center;
+function renderWorkout(){
+  const sp = activeSplit();
+  const tabs = document.getElementById('daytabs');
+  const head = document.getElementById('dayhead');
+  const body = document.getElementById('workoutBody');
+  const pw = document.getElementById('progressWrap');
+  const rb = document.getElementById('resetbar');
+  if(!sp){
+    tabs.innerHTML=''; head.innerHTML='';
+    pw.style.display='none'; rb.style.display='none';
+    body.innerHTML = '<div class="rest-card"><div class="big">No split yet.<br>Build your first one — any number of days, your exercises, your way.</div>'+
+      '<button class="bigcta" style="margin-top:18px" onclick="startWizard()">Create my split</button></div>';
+    return;
+  }
+  if(!currentDayId || !sp.days.find(d=>d.id===currentDayId)) currentDayId = pickAutoDay(sp);
+  S.lastDay[sp.id] = currentDayId; save();
+  const day = sp.days.find(d=>d.id===currentDayId);
+
+  tabs.innerHTML='';
+  sp.days.forEach((d,i)=>{
+    const b = document.createElement('button');
+    b.className = 'daytab' + (d.id===currentDayId?' active':'');
+    if(d.id===currentDayId) b.style.setProperty('--acc', cssColor(d.color));
+    b.textContent = d.name.length>9 ? d.name.slice(0,8)+'…' : d.name;
+    b.onclick = ()=>{ currentDayId=d.id; renderWorkout(); };
+    tabs.appendChild(b);
+  });
+
+  const acc = cssColor(day.color);
+  const wdTag = (day.weekday!==null && day.weekday!==undefined) ? ' · '+WEEKDAYS[day.weekday] : '';
+  head.innerHTML = '<div class="label">Day '+(sp.days.indexOf(day)+1)+' of '+sp.days.length + wdTag +'</div>'+
+    '<h2>'+esc(day.name)+'</h2>' + (day.venue?'<div class="venue">'+esc(day.venue)+'</div>':'');
+
+  const allEx = day.sections.flatMap(s=>s.exercises);
+  if(!allEx.length){
+    pw.style.display='none'; rb.style.display='none';
+    body.innerHTML = '<div class="rest-card"><div class="big">Nothing here yet.</div>'+
+      '<button class="bigcta" style="margin-top:18px" onclick="editCurrentDay()">Build this day</button></div>';
+    return;
+  }
+  pw.style.display='block'; rb.style.display='block';
+
+  const tKey = todayStr();
+  let done = 0;
+  let html = '';
+  day.sections.forEach(sec=>{
+    if(!sec.exercises.length) return;
+    html += '<div class="seclabel" style="--acc:'+acc+'"><div class="txt">'+esc(sec.name)+'</div><div class="rule"></div></div>';
+    html += '<div class="exlist">';
+    sec.exercises.forEach(ex=>{
+      const ck = tKey+'_'+ex.iid;
+      const checked = !!S.checks[ck];
+      if(checked) done++;
+      const meta = ex.sets ? (ex.sets+' sets × '+ex.reps+' reps') : (ex.reps||'');
+      html += '<div class="exercise'+(checked?' done':'')+'" style="--acc:'+acc+'">'+
+        '<div class="ex-top">'+
+          '<div class="checkbox'+(checked?' checked':'')+'" data-ck="'+ck+'">'+(checked?'&#10003;':'')+'</div>'+
+          '<div style="flex:1"><div class="ex-name">'+esc(ex.name)+'</div>'+
+          (meta?'<div class="ex-meta">'+esc(meta)+'</div>':'')+'</div>'+
+        '</div>'+
+        '<div class="ex-controls">'+
+          (ex.useWeight ?
+            '<div class="weight-field">'+
+              '<button data-act="dec" data-iid="'+ex.iid+'">–</button>'+
+              '<input type="number" inputmode="decimal" data-w="'+ex.iid+'" value="'+esc(ex.weight)+'" placeholder="0">'+
+              '<div class="unit">lb</div>'+
+              '<button data-act="inc" data-iid="'+ex.iid+'">+</button>'+
+            '</div>' : '')+
+          '<input class="notes-field" data-n="'+ex.iid+'" placeholder="note..." value="'+esc(ex.notes||'')+'">'+
+        '</div></div>';
+    });
+    html += '</div>';
+  });
+  body.innerHTML = html;
+  document.getElementById('progressLabel').textContent = done+' / '+allEx.length+' done';
+  const pf = document.getElementById('progressFill');
+  pf.style.width = (done/allEx.length*100)+'%';
+  pf.style.setProperty('--acc',acc); pf.style.background = acc;
+
+  body.querySelectorAll('.checkbox').forEach(cb=>{
+    cb.onclick = ()=>{ const k=cb.dataset.ck; S.checks[k]=!S.checks[k]; if(!S.checks[k]) delete S.checks[k]; save(); renderWorkout(); };
+  });
+  body.querySelectorAll('input[data-w]').forEach(inp=>{
+    inp.onchange = ()=>{ findEx(inp.dataset.w).weight = inp.value; save(); };
+  });
+  body.querySelectorAll('.weight-field button').forEach(btn=>{
+    btn.onclick = ()=>{
+      const ex = findEx(btn.dataset.iid);
+      let v = parseFloat(ex.weight)||0;
+      v = btn.dataset.act==='inc' ? v+5 : Math.max(0,v-5);
+      ex.weight = v; save();
+      body.querySelector('input[data-w="'+btn.dataset.iid+'"]').value = v;
+    };
+  });
+  body.querySelectorAll('input[data-n]').forEach(inp=>{
+    inp.onchange = ()=>{ findEx(inp.dataset.n).notes = inp.value; save(); };
+  });
 }
-.weight-field button:active{color:var(--gold);}
-.weight-field input{
-  width:52px; text-align:center; background:none; border:none; color:var(--ink);
-  font-size:15px; font-weight:700; font-family:inherit;
+function findEx(iid){
+  for(const sp of S.splits) for(const d of sp.days) for(const sec of d.sections)
+    for(const ex of sec.exercises) if(ex.iid===iid) return ex;
+  return {};
 }
-.weight-field .unit{font-size:11px;color:var(--ink-dim);padding-right:10px;}
-.notes-field{
-  flex:1; background:none; border:none; color:var(--ink-dim); font-size:12.5px;
+function resetToday(){
+  const t = todayStr();
+  Object.keys(S.checks).forEach(k=>{ if(k.startsWith(t)) delete S.checks[k]; });
+  save(); renderWorkout();
+}
+function editCurrentDay(){
+  const sp = activeSplit(); if(!sp) return;
+  editCtx = {splitId:sp.id, dayId:currentDayId};
+  go('dayEdit');
+}
+
+/* ================= SPLITS SCREEN ================= */
+function renderSplits(){
+  const list = document.getElementById('splitList');
+  if(!S.splits.length){ list.innerHTML = '<div class="subtle" style="margin-top:6px">No splits yet — create your first one above.</div>'; return; }
+  list.innerHTML = '';
+  S.splits.forEach(sp=>{
+    const card = document.createElement('div');
+    card.className='splitcard';
+    const active = sp.id===S.activeSplitId;
+    card.innerHTML = '<div class="nm">'+esc(sp.name)+(active?'<span class="activepill">ACTIVE</span>':'')+'</div>'+
+      '<div class="info">'+sp.days.length+'-day split · '+sp.days.map(d=>esc(d.name)).join(' / ')+'</div>'+
+      '<div class="row"></div>';
+    const row = card.querySelector('.row');
+    if(!active){
+      const b=document.createElement('button'); b.className='chip gold'; b.textContent='Set active';
+      b.onclick=()=>{ S.activeSplitId=sp.id; currentDayId=null; save(); renderSplits(); };
+      row.appendChild(b);
+    }
+    sp.days.forEach(d=>{
+      const b=document.createElement('button'); b.className='chip'; b.textContent='Edit '+ (d.name.length>10?d.name.slice(0,9)+'…':d.name);
+      b.onclick=()=>{ editCtx={splitId:sp.id, dayId:d.id}; go('dayEdit'); };
+      row.appendChild(b);
+    });
+    const rn=document.createElement('button'); rn.className='chip'; rn.textContent='Rename';
+    rn.onclick=()=>{ const v=prompt('Split name:', sp.name); if(v && v.trim()){ sp.name=v.trim(); save(); renderSplits(); } };
+    row.appendChild(rn);
+    const del=document.createElement('button'); del.className='chip danger'; del.textContent='Delete';
+    del.onclick=()=>{
+      if(!confirm('Delete "'+sp.name+'"? This can\'t be undone.')) return;
+      S.splits = S.splits.filter(x=>x.id!==sp.id);
+      if(S.activeSplitId===sp.id) S.activeSplitId = S.splits[0] ? S.splits[0].id : null;
+      currentDayId=null; save(); renderSplits();
+    };
+    row.appendChild(del);
+    list.appendChild(card);
+  });
+}
+
+/* ================= WIZARD ================= */
+let wiz = null;
+function startWizard(){
+  wiz = {name:'', count:0, days:[]};
+  document.getElementById('wizName').value='';
+  document.getElementById('wizStep1').style.display='block';
+  document.getElementById('wizStep2').style.display='none';
+  const grid = document.getElementById('countGrid');
+  grid.innerHTML='';
+  for(let i=1;i<=7;i++){
+    const b=document.createElement('button');
+    b.className='countbtn'; b.textContent=i;
+    b.onclick=()=>{ wiz.count=i; grid.querySelectorAll('.countbtn').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); };
+    grid.appendChild(b);
+  }
+  go('wizard');
+}
+function wizToStep2(){
+  wiz.name = document.getElementById('wizName').value.trim() || 'My Split';
+  if(!wiz.count){ toast('Pick how many days'); return; }
+  wiz.days = [];
+  for(let i=0;i<wiz.count;i++) wiz.days.push({name:'Day '+(i+1), color:COLORS[i%COLORS.length], weekday:null});
+  const wrap = document.getElementById('wizDays');
+  wrap.innerHTML='';
+  wiz.days.forEach((d,i)=>{
+    const row = document.createElement('div');
+    row.className='dayrow';
+    row.innerHTML = '<div class="top"><div class="num">DAY '+(i+1)+'</div>'+
+      '<input class="dname" placeholder="e.g. Push, Legs, Yoga..." maxlength="24"></div>'+
+      '<div class="dotrow"></div><div class="wkrow"></div>';
+    const inp = row.querySelector('.dname');
+    inp.oninput = ()=>{ d.name = inp.value.trim() || ('Day '+(i+1)); };
+    const dots = row.querySelector('.dotrow');
+    COLORS.forEach(c=>{
+      const dot=document.createElement('button');
+      dot.className='dot'+(d.color===c?' sel':''); dot.style.background=cssColor(c);
+      dot.onclick=()=>{ d.color=c; dots.querySelectorAll('.dot').forEach(x=>x.classList.remove('sel')); dot.classList.add('sel'); };
+      dots.appendChild(dot);
+    });
+    const wks = row.querySelector('.wkrow');
+    WEEKDAYS.forEach((w,wi)=>{
+      const b=document.createElement('button'); b.className='wk'; b.textContent=w;
+      b.onclick=()=>{
+        if(d.weekday===wi){ d.weekday=null; b.classList.remove('sel'); }
+        else { d.weekday=wi; wks.querySelectorAll('.wk').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); }
+      };
+      wks.appendChild(b);
+    });
+    wrap.appendChild(row);
+  });
+  document.getElementById('wizStep1').style.display='none';
+  document.getElementById('wizStep2').style.display='block';
+  window.scrollTo(0,0);
+}
+function wizCreate(){
+  const split = { id:uid(), name:wiz.name, days: wiz.days.map(d=>({
+    id:uid(), name:d.name, color:d.color, weekday:d.weekday, venue:'',
+    sections:[{id:uid(), name:'Warm-up', exercises:[]},{id:uid(), name:'Main work', exercises:[]}]
+  }))};
+  S.splits.push(split);
+  S.activeSplitId = split.id;
+  currentDayId = split.days[0].id;
+  save();
+  editCtx = {splitId:split.id, dayId:split.days[0].id};
+  toast('Split created — build Day 1');
+  go('dayEdit');
+}
+
+/* ================= DAY EDITOR ================= */
+function getEditDay(){
+  const sp = S.splits.find(s=>s.id===editCtx.splitId);
+  return sp ? sp.days.find(d=>d.id===editCtx.dayId) : null;
+}
+function renderDayEdit(){
+  const day = getEditDay();
+  if(!day){ go('splits'); return; }
+  document.getElementById('editDayTitle').textContent = 'Edit: '+day.name;
+  const wrap = document.getElementById('editSections');
+  wrap.innerHTML='';
+  day.sections.forEach((sec,si)=>{
+    const el = document.createElement('div');
+    el.className='editsec';
+    el.innerHTML = '<div class="shead">'+
+      '<input class="sname" value="'+esc(sec.name)+'" maxlength="24">'+
+      '<button class="mini" data-a="up">↑</button><button class="mini" data-a="dn">↓</button>'+
+      '<button class="mini x" data-a="del">✕</button></div>'+
+      '<div class="exrows"></div>'+
+      '<button class="addexbtn">+ Add exercise</button>';
+    el.querySelector('.sname').onchange = e=>{ sec.name = e.target.value.trim()||'Section'; save(); };
+    el.querySelector('[data-a="up"]').onclick = ()=>{ if(si>0){ day.sections.splice(si,1); day.sections.splice(si-1,0,sec); save(); renderDayEdit(); } };
+    el.querySelector('[data-a="dn"]').onclick = ()=>{ if(si<day.sections.length-1){ day.sections.splice(si,1); day.sections.splice(si+1,0,sec); save(); renderDayEdit(); } };
+    el.querySelector('[data-a="del"]').onclick = ()=>{
+      if(sec.exercises.length && !confirm('Delete section "'+sec.name+'" and its '+sec.exercises.length+' exercise(s)?')) return;
+      day.sections.splice(si,1); save(); renderDayEdit();
+    };
+    el.querySelector('.addexbtn').onclick = ()=>openPicker(sec.id);
+    const rows = el.querySelector('.exrows');
+    sec.exercises.forEach((ex,ei)=>{
+      const r = document.createElement('div');
+      r.className='edrow';
+      const thumb = ex.dbId
+        ? '<img class="edthumb" loading="lazy" src="'+IMG_BASE+ex.dbId+'/0.jpg" onerror="this.outerHTML=\'<div class=&quot;edthumb ph&quot;>🏋️</div>\'">'
+        : '<div class="edthumb ph">🏋️</div>';
+      r.innerHTML = thumb +
+        '<div class="edinfo"><div class="edname">'+esc(ex.name)+'</div>'+
+        '<div class="edsr">'+
+          '<input inputmode="numeric" class="sets" value="'+esc(ex.sets||'')+'" placeholder="sets"><span class="x">×</span>'+
+          '<input class="reps" value="'+esc(ex.reps||'')+'" placeholder="reps">'+
+          '<button class="wtog'+(ex.useWeight?' on':'')+'">lb</button>'+
+        '</div></div>'+
+        '<div class="edbtns"><button class="mini" data-a="up">↑</button><button class="mini" data-a="dn">↓</button><button class="mini x" data-a="del">✕</button></div>';
+      r.querySelector('.sets').onchange = e=>{ ex.sets = parseInt(e.target.value)||0; save(); };
+      r.querySelector('.reps').onchange = e=>{ ex.reps = e.target.value.trim(); save(); };
+      r.querySelector('.wtog').onclick = e=>{ ex.useWeight=!ex.useWeight; e.target.classList.toggle('on',ex.useWeight); save(); };
+      r.querySelector('[data-a="up"]').onclick = ()=>{ if(ei>0){ sec.exercises.splice(ei,1); sec.exercises.splice(ei-1,0,ex); save(); renderDayEdit(); } };
+      r.querySelector('[data-a="dn"]').onclick = ()=>{ if(ei<sec.exercises.length-1){ sec.exercises.splice(ei,1); sec.exercises.splice(ei+1,0,ex); save(); renderDayEdit(); } };
+      r.querySelector('[data-a="del"]').onclick = ()=>{ sec.exercises.splice(ei,1); save(); renderDayEdit(); };
+      rows.appendChild(r);
+    });
+    wrap.appendChild(el);
+  });
+}
+function addSection(){
+  const day = getEditDay(); if(!day) return;
+  const nm = prompt('Section name (e.g. Warm-up, Chest, Cardio):','');
+  if(nm===null) return;
+  day.sections.push({id:uid(), name:(nm.trim()||'Section'), exercises:[]});
+  save(); renderDayEdit();
+}
+
+/* ================= PICKER ================= */
+let pickGroup='all', pickQ='', pickShown=60;
+function openPicker(secId){
+  pickCtx = {splitId:editCtx.splitId, dayId:editCtx.dayId, secId:secId};
+  pickGroup='all'; pickQ=''; pickShown=60;
+  document.getElementById('pickSearch').value='';
+  const chips = document.getElementById('groupChips');
+  chips.innerHTML='';
+  GROUPS.forEach(g=>{
+    const b=document.createElement('button');
+    b.className='gchip'+(g[0]===pickGroup?' sel':''); b.textContent=g[1];
+    b.onclick=()=>{ pickGroup=g[0]; pickShown=60; chips.querySelectorAll('.gchip').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); renderPickList(); };
+    chips.appendChild(b);
+  });
+  document.getElementById('pickerSheet').classList.add('open');
+  renderPickList();
+}
+function closePicker(){
+  document.getElementById('pickerSheet').classList.remove('open');
+  renderDayEdit();
+}
+function pickerFilterChanged(){
+  pickQ = document.getElementById('pickSearch').value.trim().toLowerCase();
+  pickShown=60;
+  renderPickList();
+}
+function pickerSection(){
+  const sp = S.splits.find(s=>s.id===pickCtx.splitId);
+  const day = sp && sp.days.find(d=>d.id===pickCtx.dayId);
+  return day && day.sections.find(x=>x.id===pickCtx.secId);
+}
+function renderPickList(){
+  const scroll = document.getElementById('pickScroll');
+  let items = EXDB;
+  if(pickGroup!=='all') items = items.filter(e=>e[2]===pickGroup);
+  if(pickQ) items = items.filter(e=>e[0].toLowerCase().includes(pickQ));
+  const slice = items.slice(0,pickShown);
+  let html = '<div class="customrow"><div style="font-size:13px;font-weight:700;color:var(--gold)">+ Custom exercise</div>'+
+    '<div class="r"><input class="textin" id="customName" placeholder="Name it (e.g. Kickboxing Class)" style="padding:10px"></div>'+
+    '<div class="r"><button class="chip" id="customNoW">Add — no weight</button><button class="chip gold" id="customW">Add — tracks weight</button></div></div>';
+  slice.forEach((e,idx)=>{
+    html += '<div class="pickrow">'+
+      '<img class="edthumb" loading="lazy" src="'+IMG_BASE+e[1]+'/0.jpg" onerror="this.style.visibility=\'hidden\'">'+
+      '<div style="flex:1;min-width:0"><div class="nm">'+esc(e[0])+'</div><div class="eq">'+esc(e[3]||'')+'</div></div>'+
+      '<button class="pickadd" data-i="'+EXDB.indexOf(e)+'">+</button></div>';
+  });
+  if(items.length>pickShown) html += '<button class="morebtn" onclick="pickShown+=60;renderPickList()">Show more ('+(items.length-pickShown)+' left)</button>';
+  if(!items.length) html += '<div class="subtle" style="padding:24px 4px;text-align:center">No matches — try another word, or add it as a custom exercise above.</div>';
+  scroll.innerHTML = html;
+  scroll.querySelectorAll('.pickadd').forEach(b=>{
+    b.onclick = ()=>{
+      const e = EXDB[parseInt(b.dataset.i)];
+      const sec = pickerSection(); if(!sec) return;
+      const useW = !(e[2]==='stretch'||e[2]==='cardio'||e[3]==='bodyweight'||e[3]==='');
+      sec.exercises.push({iid:uid(), name:e[0], dbId:e[1], sets:3, reps:'10', useWeight:useW, weight:'', notes:''});
+      save(); toast('Added: '+e[0]);
+    };
+  });
+  const cn = ()=>document.getElementById('customName').value.trim();
+  document.getElementById('customNoW').onclick = ()=>{ addCustom(cn(),false); };
+  document.getElementById('customW').onclick = ()=>{ addCustom(cn(),true); };
+}
+function addCustom(name,useW){
+  if(!name){ toast('Type a name first'); return; }
+  const sec = pickerSection(); if(!sec) return;
+  sec.exercises.push({iid:uid(), name:name, dbId:null, sets:useW?3:0, reps:useW?'10':'', useWeight:useW, weight:'', notes:''});
+  save(); toast('Added: '+name);
+  document.getElementById('customName').value='';
+}
+
+/* ================= BACKUP ================= */
+function backupData(){
+  const blob = new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ceefit-backup-'+todayStr()+'.json';
+  a.click();
+  toast('Backup downloaded');
+}
+function restoreData(input){
+  const f = input.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const d = JSON.parse(r.result);
+      if(!d.splits) throw 0;
+      S = d; save(); currentDayId=null;
+      toast('Data restored ✓'); go('workout');
+    }catch(e){ toast('That file isn\'t a Cee Fit backup'); }
+  };
+  r.readAsText(f);
+  input.value='';
+}
+
+/* ================= UTIL ================= */
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let toastTimer=null;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+renderTop();
+renderW  flex:1; background:none; border:none; color:var(--ink-dim); font-size:12.5px;
   font-family:inherit; text-align:right;
 }
 .notes-field:focus{color:var(--ink); outline:none;}
