@@ -1,6 +1,6 @@
 {
   "name": "Cee Fit",
-  "short_name": "Iron Log",
+  "short_name": "Cee Fit",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0d0d0d",
